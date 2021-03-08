@@ -473,77 +473,59 @@ SHconcentration2=a['arr_5']/100
 NHtyerror=compute_siconc_metrics(NHconcentration1, NHconcentration2, NHcellarea)
 SHtyerror=compute_siconc_metrics(SHconcentration1, SHconcentration2, SHcellarea)
 name=['CMCC-CM2-HR4_omip2_1980_2007_siconc.npz', 'CMCC-CM2-SR5_omip1_1980_2007_siconc.npz', 'CMCC-CM2-SR5_omip2_1980_2007_siconc.npz', 'EC-Earth3_omip1_r1_1980_2007_siconc.npz','EC-Earth3_omip2_r1_1980_2007_siconc.npz', 'GFDL-CM4_omip1_r1i_1980_2007_siconc.npz', 'GFDL-OM4p5B_omip1__1980_2007_siconc.npz', 'IPSL-CM6A-LR_omip1_1980_2007_siconc.npz',  'MIROC6_omip1_r1i1p_1980_2007_siconc.npz', 'MIROC6_omip2_r1i1p_1980_2007_siconc.npz', 'MRI-ESM2-0_omip1_r_1980_2007_siconc.npz', 'MRI-ESM2-0_omip2_r_1980_2007_siconc.npz', 'NorESM2-LM_omip1_r_1980_2007_siconc.npz', 'NorESM2-LM_omip2_r_1980_2007_siconc.npz']
-#models vs NSIDC-0051
-NHerror_mean1=np.zeros(14)
-SHerror_mean1=np.zeros(14)
-NH_error_std1=np.zeros(14)
-SH_error_std1=np.zeros(14)
-NH_error_trend1=np.zeros(14)
-SH_error_trend1=np.zeros(14)
-Metrics_siconc=np.zeros((17, 6))
-for num in range(14):
-  a=np.load(path + name[num])
-  NHconcentration=a['arr_2']/100
-  SHconcentration=a['arr_5']/100
-  NHMetrics=compute_siconc_metrics(NHconcentration, NHconcentration1, NHcellarea)
-  SHMetrics=compute_siconc_metrics(SHconcentration, SHconcentration1, SHcellarea)
-  NHerror_mean1[num]=NHMetrics[0]#NHerror_mean
-  SHerror_mean1[num]=SHMetrics[0]#SHerror_mean
-  NH_error_std1[num]=NHMetrics[1]#NH_error_std
-  SH_error_std1[num]=SHMetrics[1]#SH_error_std
-  NH_error_trend1[num]=NHMetrics[2]#NH_error_trend
-  SH_error_trend1[num]=SHMetrics[2]#SH_error_trend
-Metrics_siconc[0:14,0]=NHerror_mean1/NHtyerror[0]
-Metrics_siconc[0:14,1]=NH_error_std1/NHtyerror[1]
-Metrics_siconc[0:14,2]=NH_error_trend1/NHtyerror[2]
-Metrics_siconc[0:14,3]=SHerror_mean1/SHtyerror[0]
-Metrics_siconc[0:14,4]=SH_error_std1/SHtyerror[1]
-Metrics_siconc[0:14,5]=SH_error_trend1/SHtyerror[2]
-Metrics_siconc[14,0]=np.mean(NHerror_mean1)/NHtyerror[0]
-Metrics_siconc[14,1]=np.mean(NH_error_std1)/NHtyerror[1]
-Metrics_siconc[14,2]=np.mean(NH_error_trend1)/NHtyerror[2]
-Metrics_siconc[14,3]=np.mean(SHerror_mean1)/SHtyerror[0]
-Metrics_siconc[14,4]=np.mean(SH_error_std1)/SHtyerror[1]
-Metrics_siconc[14,5]=np.mean(SH_error_trend1)/SHtyerror[2] 
-Metrics_siconc[15,:]=(Metrics_siconc[1,:]+Metrics_siconc[3,:]+Metrics_siconc[8,:]+Metrics_siconc[10,:]+Metrics_siconc[12,:])/5#OMIP1 mean
-Metrics_siconc[16,:]=(Metrics_siconc[2,:]+Metrics_siconc[4,:]+Metrics_siconc[9,:]+Metrics_siconc[11,:]+Metrics_siconc[13,:])/5#OMIP2 mean
-np.savez('siconc_metrics_NSIDC0051.npz', Metrics_siconc, NHerror_mean1, SHerror_mean1, NH_error_std1, SH_error_std1, NH_error_trend1, SH_error_trend1)
-#models vs OSI-450 
-NHerror_mean1=np.zeros(14)
-SHerror_mean1=np.zeros(14)
-NH_error_std1=np.zeros(14)
-SH_error_std1=np.zeros(14)
-NH_error_trend1=np.zeros(14)
-SH_error_trend1=np.zeros(14)
-Metrics_siconc=np.zeros((17, 6))
-for num in range(14):
-  a=np.load(path + name[num])
-  NHconcentration=a['arr_2']/100
-  SHconcentration=a['arr_5']/100
-  NHMetrics=compute_siconc_metrics(NHconcentration, NHconcentration2, NHcellarea)
-  SHMetrics=compute_siconc_metrics(SHconcentration, SHconcentration2, SHcellarea)
-  NHerror_mean1[num]=NHMetrics[0]#NHerror_mean
-  SHerror_mean1[num]=SHMetrics[0]#SHerror_mean
-  NH_error_std1[num]=NHMetrics[1]#NH_error_std
-  SH_error_std1[num]=SHMetrics[1]#SH_error_std
-  NH_error_trend1[num]=NHMetrics[2]#NH_error_trend
-  SH_error_trend1[num]=SHMetrics[2]#SH_error_trend
 
-Metrics_siconc[0:14,0]=NHerror_mean1/NHtyerror[0]
-Metrics_siconc[0:14,1]=NH_error_std1/NHtyerror[1]
-Metrics_siconc[0:14,2]=NH_error_trend1/NHtyerror[2]
-Metrics_siconc[0:14,3]=SHerror_mean1/SHtyerror[0]
-Metrics_siconc[0:14,4]=SH_error_std1/SHtyerror[1]
-Metrics_siconc[0:14,5]=SH_error_trend1/SHtyerror[2]
-Metrics_siconc[14,0]=np.mean(NHerror_mean1)/NHtyerror[0]
-Metrics_siconc[14,1]=np.mean(NH_error_std1)/NHtyerror[1]
-Metrics_siconc[14,2]=np.mean(NH_error_trend1)/NHtyerror[2]
-Metrics_siconc[14,3]=np.mean(SHerror_mean1)/SHtyerror[0]
-Metrics_siconc[14,4]=np.mean(SH_error_std1)/SHtyerror[1]
-Metrics_siconc[14,5]=np.mean(SH_error_trend1)/SHtyerror[2] 
-Metrics_siconc[15,:]=(Metrics_siconc[1,:]+Metrics_siconc[3,:]+Metrics_siconc[8,:]+Metrics_siconc[10,:]+Metrics_siconc[12,:])/5#OMIP1 mean
-Metrics_siconc[16,:]=(Metrics_siconc[2,:]+Metrics_siconc[4,:]+Metrics_siconc[9,:]+Metrics_siconc[11,:]+Metrics_siconc[13,:])/5#OMIP2 mean
-np.savez('siconc_metrics_OSI450.npz', Metrics_siconc, NHerror_mean1, SHerror_mean1, NH_error_std1, SH_error_std1, NH_error_trend1, SH_error_trend1)
+NHerror_mean1=np.zeros(14)
+SHerror_mean1=np.zeros(14)
+NH_error_std1=np.zeros(14)
+SH_error_std1=np.zeros(14)
+NH_error_trend1=np.zeros(14)
+SH_error_trend1=np.zeros(14)
+Metrics_siconc=np.zeros((17, 6))
+for obs in range(2):
+  if obs==0:#models vs NSIDC-0051
+    i='NSIDC0051'
+    for num in range(14):
+      a=np.load(path + name[num])
+      NHconcentration=a['arr_2']/100
+      SHconcentration=a['arr_5']/100
+      NHMetrics=compute_siconc_metrics(NHconcentration, NHconcentration1, NHcellarea)
+      SHMetrics=compute_siconc_metrics(SHconcentration, SHconcentration1, SHcellarea)
+      NHerror_mean1[num]=NHMetrics[0]#NHerror_mean
+      SHerror_mean1[num]=SHMetrics[0]#SHerror_mean
+      NH_error_std1[num]=NHMetrics[1]#NH_error_std
+      SH_error_std1[num]=SHMetrics[1]#SH_error_std
+      NH_error_trend1[num]=NHMetrics[2]#NH_error_trend
+      SH_error_trend1[num]=SHMetrics[2]#SH_error_trend
+  else:#models vs OSI-450
+    i='OSI450' 
+    for num in range(14):
+      a=np.load(path + name[num])
+      NHconcentration=a['arr_2']/100
+      SHconcentration=a['arr_5']/100
+      NHMetrics=compute_siconc_metrics(NHconcentration, NHconcentration2, NHcellarea)
+      SHMetrics=compute_siconc_metrics(SHconcentration, SHconcentration2, SHcellarea)
+      NHerror_mean1[num]=NHMetrics[0]#NHerror_mean
+      SHerror_mean1[num]=SHMetrics[0]#SHerror_mean
+      NH_error_std1[num]=NHMetrics[1]#NH_error_std
+      SH_error_std1[num]=SHMetrics[1]#SH_error_std
+      NH_error_trend1[num]=NHMetrics[2]#NH_error_trend
+      SH_error_trend1[num]=SHMetrics[2]#SH_error_trend
+
+  Metrics_siconc[0:14,0]=NHerror_mean1/NHtyerror[0]
+  Metrics_siconc[0:14,1]=NH_error_std1/NHtyerror[1]
+  Metrics_siconc[0:14,2]=NH_error_trend1/NHtyerror[2]
+  Metrics_siconc[0:14,3]=SHerror_mean1/SHtyerror[0]
+  Metrics_siconc[0:14,4]=SH_error_std1/SHtyerror[1]
+  Metrics_siconc[0:14,5]=SH_error_trend1/SHtyerror[2]
+  Metrics_siconc[14,0]=np.mean(NHerror_mean1)/NHtyerror[0]
+  Metrics_siconc[14,1]=np.mean(NH_error_std1)/NHtyerror[1]
+  Metrics_siconc[14,2]=np.mean(NH_error_trend1)/NHtyerror[2]
+  Metrics_siconc[14,3]=np.mean(SHerror_mean1)/SHtyerror[0]
+  Metrics_siconc[14,4]=np.mean(SH_error_std1)/SHtyerror[1]
+  Metrics_siconc[14,5]=np.mean(SH_error_trend1)/SHtyerror[2] 
+  Metrics_siconc[15,:]=(Metrics_siconc[1,:]+Metrics_siconc[3,:]+Metrics_siconc[8,:]+Metrics_siconc[10,:]+Metrics_siconc[12,:])/5#OMIP1 mean
+  Metrics_siconc[16,:]=(Metrics_siconc[2,:]+Metrics_siconc[4,:]+Metrics_siconc[9,:]+Metrics_siconc[11,:]+Metrics_siconc[13,:])/5#OMIP2 mean
+  np.savez('siconc_metrics_'+str(i)+'.npz', Metrics_siconc, NHerror_mean1, SHerror_mean1, NH_error_std1, SH_error_std1, NH_error_trend1, SH_error_trend1)
 
 # --------------------------------------------------------------
 # PART 7) A script plots the ice concentration metrics (heatmap)|
