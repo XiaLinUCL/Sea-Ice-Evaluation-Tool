@@ -113,6 +113,7 @@ def heatmap(data, row_labels, col_labels, ax=None,
     ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
     ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
     ax.tick_params(which="minor", bottom=False, left=False)
+
     return im, cbar
 
 # ---------------------------------------
@@ -160,6 +161,7 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
             #kw.update(color=textcolors[0])
             text = im.axes.text(j, i, valfmt(data[i, j], None), **kw)
             texts.append(text)
+            
     return texts
 
 # -------------------------------------------------------------------------------------------

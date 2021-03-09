@@ -87,6 +87,7 @@ def compute_interp(lat,lon,field):
     SHconcentration = np.array([pyresample.kd_tree.resample_nearest(orig_def, np.array(field[i, :, :]), targ_def, radius_of_influence = 500000,  fill_value=None) for i in range(336)])
     idx = np.where(SHconcentration > 1000.00)
     SHconcentration[idx] = np.nan
+
     return NHconcentration, SHconcentration
 
 # -----------------------------------------------
@@ -194,6 +195,7 @@ def compute_siconc_metrics(concentration, concentration1, cellarea):
   #Compute global error
   error_trend=np.nansum(error_trend_conc*cellarea*mask_trend_conc)/np.nansum(cellarea*mask_trend_conc)
   print(error_trend)
+
   return error_mean, error_std, error_trend
 
 # ------------------------------
@@ -244,6 +246,7 @@ def heatmap(data, row_labels, col_labels, ax=None,
     ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
     ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
     ax.tick_params(which="minor", bottom=False, left=False)
+
     return im, cbar
 
 # ---------------------------------------
@@ -291,6 +294,7 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
             #kw.update(color=textcolors[0])
             text = im.axes.text(j, i, valfmt(data[i, j], None), **kw)
             texts.append(text)
+            
     return texts
 
 # --------------------------------------------------
