@@ -6,7 +6,8 @@
 #    on the mean state, interannual variability and trend in order to get the metrics;
 #    The input data is a numpy array but a NetCDF file 
 # 3) The heatmap function  
-# 4) The annotate heatmap function
+# 4) The annotate heatmap function (The heatmap and annotate heatmap functions were written 
+#    by following https://matplotlib.org/stable/gallery/images_contours_and_fields/image_annotated_heatmap.html)
 # 5) A script to plot the mean seasonal cycle of ice extent in the Arctic and Antarctic
 # 6) A script to plot the monthly anomalies of ice extent from the 
 #    observational and model mean in the Arctic and Antarctic
@@ -69,28 +70,16 @@ def compute_siext_metrics(extent, extent1):
 # ------------------------------
 def heatmap(data, row_labels, col_labels, ax=None,
             cbar_kw={}, cbarlabel="", **kwargs):
-    """
-    Create a heatmap from a numpy array and two lists of labels.
-
-    Parameters
-    ----------
-    data
-        A 2D numpy array of shape (N, M).
-    row_labels
-        A list or array of length N with the labels for the rows.
-    col_labels
-        A list or array of length M with the labels for the columns.
-    ax
-        A `matplotlib.axes.Axes` instance to which the heatmap is plotted.  If
-        not provided, use current axes or create a new one.  Optional.
-    cbar_kw
-        A dictionary with arguments to `matplotlib.Figure.colorbar`.  Optional.
-    cbarlabel
-        The label for the colorbar.  Optional.
-    **kwargs
-        All other arguments are forwarded to `imshow`.
-    """
-
+  ''' Input: -data: A 2D numpy array of shape (N, M).
+             -row_labels: A list or array of length N with the labels for the rows.
+             -col_labels: A list or array of length M with the labels for the columns.
+             -ax: A `matplotlib.axes.Axes` instance to which the heatmap is plotted. If
+                  not provided, use current axes or create a new one.  Optional.
+             -cbar_kw: A dictionary with arguments to `matplotlib.Figure.colorbar`. Optional.
+             -cbarlabel: The label for the colorbar. Optional.
+             -**kwargs: All other arguments are forwarded to `imshow`.
+      Output: Create a heatmap from a numpy array and two lists of labels.
+  '''
     if not ax:
         ax = plt.gca()
 
@@ -124,7 +113,6 @@ def heatmap(data, row_labels, col_labels, ax=None,
     ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
     ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
     ax.tick_params(which="minor", bottom=False, left=False)
-
     return im, cbar
 
 # ---------------------------------------
@@ -133,31 +121,17 @@ def heatmap(data, row_labels, col_labels, ax=None,
 def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
                      textcolors=("black", "white"),
                      threshold=None, **textkw):
-    """
-    A function to annotate a heatmap.
-
-    Parameters
-    ----------
-    im
-        The AxesImage to be labeled.
-    data
-        Data used to annotate.  If None, the image's data is used.  Optional.
-    valfmt
-        The format of the annotations inside the heatmap.  This should either
-        use the string format method, e.g. "$ {x:.2f}", or be a
-        `matplotlib.ticker.Formatter`.  Optional.
-    textcolors
-        A pair of colors.  The first is used for values below a threshold,
-        the second for those above.  Optional.
-    threshold
-        Value in data units according to which the colors from textcolors are
-        applied.  If None (the default) uses the middle of the colormap as
-        separation.  Optional.
-    **kwargs
-        All other arguments are forwarded to each call to `text` used to create
-        the text labels.
-    """
-
+    ''' Input: -im: The AxesImage to be labeled.
+               -data: Data used to annotate.  If None, the image's data is used. Optional.
+               -valfmt: The format of the annotations inside the heatmap.  This should either use the string 
+                        format method, e.g. "$ {x:.2f}", or be a `matplotlib.ticker.Formatter`. Optional.       
+               -textcolors: A pair of colors.  The first is used for values below a threshold,
+                            the second for those above. Optional.
+               -threshold: Value in data units according to which the colors from textcolors are applied. 
+                           If None (the default) uses the middle of the colormap as separation. Optional.          
+               -**kwargs: All other arguments are forwarded to each call to `text` used to create the text labels.
+        Output: Annotate a heatmap
+    '''  
     if not isinstance(data, (list, np.ndarray)):
         data = im.get_array()
 
@@ -186,7 +160,6 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
             #kw.update(color=textcolors[0])
             text = im.axes.text(j, i, valfmt(data[i, j], None), **kw)
             texts.append(text)
-
     return texts
 
 # -------------------------------------------------------------------------------------------

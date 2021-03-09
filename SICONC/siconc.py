@@ -8,7 +8,8 @@
 #    on the mean state, interannual variability and trend in order to get the metrics;
 #    The input data is a numpy array but a NetCDF file 
 # 3) The heatmap function  
-# 4) The annotate heatmap function
+# 4) The annotate heatmap function (The heatmap and annotate heatmap functions were written 
+#    by following https://matplotlib.org/stable/gallery/images_contours_and_fields/image_annotated_heatmap.html)
 # 5) A script deals with the input NetCDF data, and then calls the function 1) 
 # 6) A script calls the function 2) and then computes the ice concentration metrics
 # 7) A script calls the functions 3) and 4) to plot the ice concentration metrics
@@ -19,7 +20,6 @@
 def compute_interp(lat,lon,field):
   ''' Input: -latitude, longitude of the original grid
              -ice variable on the original grid
-
       Output: Interpolated the ice variable to the NSIDC-0051 polar stereographic grid
   '''
   if np.min(lat) > 0:
@@ -39,7 +39,6 @@ def compute_interp(lat,lon,field):
     idx = np.where(NHconcentration > 1000.00)
     NHconcentration[idx] = np.nan
     return NHconcentration
-  
   elif np.max(lat) < 0:
     # Southern Hemisphere
     # load lat-lon of the target grid
@@ -57,7 +56,6 @@ def compute_interp(lat,lon,field):
     idx = np.where(SHconcentration > 1000.00)
     SHconcentration[idx] = np.nan
     return SHconcentration
-  
   else:
     # Northern Hemisphere
     # load lat-lon of the target grid
@@ -74,7 +72,6 @@ def compute_interp(lat,lon,field):
     NHconcentration = np.array([pyresample.kd_tree.resample_nearest(orig_def, np.array(field[i, :, :]), targ_def, radius_of_influence = 500000, fill_value=None) for i in range(336)])
     idx = np.where(NHconcentration > 1000.00)
     NHconcentration[idx] = np.nan
-
     # Southern Hemisphere
     # load lat-lon of the target grid
     access_pr_file = '/sea ice data/OBS/siconc/NSIDC-0051/siconc_r1i1p1_mon_197901-201712_sh-pss25.nc'
@@ -98,7 +95,6 @@ def compute_interp(lat,lon,field):
 def compute_siconc_metrics(concentration, concentration1, cellarea):
   ''' Input: - sea ice concentration (%) in the Arctic or Antarctic from two datasets
              - cellarea: array of grid cell areas in the Arctic or Antarctic (square meters)
-
       Output: Errors between two ice concentration datasets of mean cycle, anomaly variance and trend in the Arctic or Antarctic
   '''
   #Mean cycle, anomaly varaiance & trend
@@ -132,7 +128,6 @@ def compute_siconc_metrics(concentration, concentration1, cellarea):
   ndpm=[31,28,31,30,31,30,31,31,30,31,30,31];
   error_mean=np.sum(error_mean_monthly*ndpm)/np.sum(ndpm)
   print(error_mean)
- 
   #=======================================================================
   print('                ')
   print('ANOMALY VARIANCE')
@@ -162,7 +157,6 @@ def compute_siconc_metrics(concentration, concentration1, cellarea):
   #Compute global error on std
   error_std=np.nansum(error_std_conc*cellarea*mask_std_conc)/np.nansum(cellarea*mask_std_conc)
   print(error_std)
-  
   #========================================================================
   print('     ')
   print('TREND')
@@ -207,28 +201,16 @@ def compute_siconc_metrics(concentration, concentration1, cellarea):
 # ------------------------------
 def heatmap(data, row_labels, col_labels, ax=None,
             cbar_kw={}, cbarlabel="", **kwargs):
-    """
-    Create a heatmap from a numpy array and two lists of labels.
-
-    Parameters
-    ----------
-    data
-        A 2D numpy array of shape (N, M).
-    row_labels
-        A list or array of length N with the labels for the rows.
-    col_labels
-        A list or array of length M with the labels for the columns.
-    ax
-        A `matplotlib.axes.Axes` instance to which the heatmap is plotted.  If
-        not provided, use current axes or create a new one.  Optional.
-    cbar_kw
-        A dictionary with arguments to `matplotlib.Figure.colorbar`.  Optional.
-    cbarlabel
-        The label for the colorbar.  Optional.
-    **kwargs
-        All other arguments are forwarded to `imshow`.
-    """
-
+  ''' Input: -data: A 2D numpy array of shape (N, M).
+             -row_labels: A list or array of length N with the labels for the rows.
+             -col_labels: A list or array of length M with the labels for the columns.
+             -ax: A `matplotlib.axes.Axes` instance to which the heatmap is plotted. If
+                  not provided, use current axes or create a new one.  Optional.
+             -cbar_kw: A dictionary with arguments to `matplotlib.Figure.colorbar`. Optional.
+             -cbarlabel: The label for the colorbar. Optional.
+             -**kwargs: All other arguments are forwarded to `imshow`.
+      Output: Create a heatmap from a numpy array and two lists of labels.
+  '''
     if not ax:
         ax = plt.gca()
 
@@ -262,7 +244,6 @@ def heatmap(data, row_labels, col_labels, ax=None,
     ax.set_yticks(np.arange(data.shape[0]+1)-.5, minor=True)
     ax.grid(which="minor", color="w", linestyle='-', linewidth=3)
     ax.tick_params(which="minor", bottom=False, left=False)
-
     return im, cbar
 
 # ---------------------------------------
@@ -271,31 +252,17 @@ def heatmap(data, row_labels, col_labels, ax=None,
 def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
                      textcolors=("black", "white"),
                      threshold=None, **textkw):
-    """
-    A function to annotate a heatmap.
-
-    Parameters
-    ----------
-    im
-        The AxesImage to be labeled.
-    data
-        Data used to annotate.  If None, the image's data is used.  Optional.
-    valfmt
-        The format of the annotations inside the heatmap.  This should either
-        use the string format method, e.g. "$ {x:.2f}", or be a
-        `matplotlib.ticker.Formatter`.  Optional.
-    textcolors
-        A pair of colors.  The first is used for values below a threshold,
-        the second for those above.  Optional.
-    threshold
-        Value in data units according to which the colors from textcolors are
-        applied.  If None (the default) uses the middle of the colormap as
-        separation.  Optional.
-    **kwargs
-        All other arguments are forwarded to each call to `text` used to create
-        the text labels.
-    """
-
+    ''' Input: -im: The AxesImage to be labeled.
+               -data: Data used to annotate.  If None, the image's data is used. Optional.
+               -valfmt: The format of the annotations inside the heatmap.  This should either use the string 
+                        format method, e.g. "$ {x:.2f}", or be a `matplotlib.ticker.Formatter`. Optional.       
+               -textcolors: A pair of colors.  The first is used for values below a threshold,
+                            the second for those above. Optional.
+               -threshold: Value in data units according to which the colors from textcolors are applied. 
+                           If None (the default) uses the middle of the colormap as separation. Optional.          
+               -**kwargs: All other arguments are forwarded to each call to `text` used to create the text labels.
+        Output: Annotate a heatmap
+    '''
     if not isinstance(data, (list, np.ndarray)):
         data = im.get_array()
 
@@ -324,7 +291,6 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
             #kw.update(color=textcolors[0])
             text = im.axes.text(j, i, valfmt(data[i, j], None), **kw)
             texts.append(text)
-
     return texts
 
 # --------------------------------------------------
