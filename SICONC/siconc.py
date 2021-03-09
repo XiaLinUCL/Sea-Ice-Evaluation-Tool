@@ -532,43 +532,34 @@ for obs in range(2):
 # --------------------------------------------------------------
 Models=['CMCC-CM2-HR4/2','CMCC-CM2-SR5/1','CMCC-CM2-SR5/2','EC-Earth3/1','EC-Earth3/2','GFDL-CM4/1','GFDL-OM4p5B/1','IPSL-CM6A-LR/1','MIROC6/1','MIROC6/2','MRI-ESM2-0/1','MRI-ESM2-0/2','NorESM2-LM/1','NorESM2-LM/2','Model mean','Model mean/1','Model mean/2']
 Variables=['Mean Conc. North','Std Ano Conc. North','Trend Ano Conc. North','Mean Conc. South','Std Ano Conc. South','Trend Ano Conc. South']
-#NSIDC-0051
-a=np.load('siconc_metrics_NSIDC0051.npz')
-values=a['arr_0']
-dpi=100
-squaresize = 220
-figwidth = 18*squaresize/float(dpi)
-figheight = 6*squaresize/float(dpi)
-fig,ax1 = plt.subplots(1, figsize=(figwidth, figheight), dpi=dpi)
-im,cbar = heatmap(values, Models,Variables, ax=ax1, cmap="OrRd", vmin=1, vmax=5) 
-texts = annotate_heatmap(im, valfmt="{x:.2f}",size=16,threshold=3.5)
-cbar.remove()
-ax1.set_xticklabels(['Mean Conc. North','Std Ano Conc. North','Trend Ano Conc. North','Mean Conc. South','Std Ano Conc. South','Trend Ano Conc. South'])
-plt.setp(ax1.get_xticklabels(), fontname='Arial', fontsize=16)
-plt.setp(ax1.get_yticklabels(), fontname='Arial', fontsize=16)
-cax = fig.add_axes([0.75, 0.113, 0.01, 0.765])
-cbar = fig.colorbar(im, cax=cax,ticks=[1,1.5,2,2.5,3,3.5,4,4.5,5], orientation="vertical")
-cbar.ax.yaxis.set_ticks_position('both')
-cbar.ax.tick_params(direction='in',length=2,labelsize=16)
-ax1.set_title("(a) Models vs NSIDC-0051", fontname='Arial', fontsize=16)
-plt.savefig('./Fig2a_Metrics_siconc_NSIDC0051.png', bbox_inches = "tight", dpi = 500)
-#OSI450
-a=np.load('siconc_metrics_OSI450.npz')
-values=a['arr_0']
-dpi=100
-squaresize = 220
-figwidth = 18*squaresize/float(dpi)
-figheight = 6*squaresize/float(dpi)
-fig,ax2 = plt.subplots(1, figsize=(figwidth, figheight), dpi=dpi)
-im,cbar = heatmap(values, Models,Variables, ax=ax2, cmap="OrRd", vmin=1, vmax=5) 
-texts = annotate_heatmap(im, valfmt="{x:.2f}",size=16,threshold=3.5)
-cbar.remove()
-ax2.set_xticklabels(['Mean Conc. North','Std Ano Conc. North','Trend Ano Conc. North','Mean Conc. South','Std Ano Conc. South','Trend Ano Conc. South'])
-plt.setp(ax2.get_xticklabels(), fontname='Arial', fontsize=16)
-plt.setp(ax2.get_yticklabels(), fontname='Arial', fontsize=16)
-cax = fig.add_axes([0.75, 0.113, 0.01, 0.765])
-cbar = fig.colorbar(im, cax=cax,ticks=[1,1.5,2,2.5,3,3.5,4,4.5,5], orientation="vertical")
-cbar.ax.yaxis.set_ticks_position('both')
-cbar.ax.tick_params(direction='in',length=2,labelsize=16)
-ax2.set_title("(b) Models vs OSI-450", fontname='Arial', fontsize=16)
-plt.savefig('./Fig2b_Metrics_siconc_OSI450.png', bbox_inches = "tight", dpi = 500)
+for obs in range(2):
+  if obs==0:#NSIDC-0051
+    a=np.load('siconc_metrics_NSIDC0051.npz')
+  else:#OSI450
+    a=np.load('siconc_metrics_OSI450.npz')
+  values=a['arr_0']
+  dpi=100
+  squaresize = 220
+  figwidth = 18*squaresize/float(dpi)
+  figheight = 6*squaresize/float(dpi)
+  fig,ax1 = plt.subplots(1, figsize=(figwidth, figheight), dpi=dpi)
+  im,cbar = heatmap(values, Models,Variables, ax=ax1, cmap="OrRd", vmin=1, vmax=5) 
+  texts = annotate_heatmap(im, valfmt="{x:.2f}",size=16,threshold=3.5)
+  cbar.remove()
+  ax1.set_xticklabels(['Mean Conc. North','Std Ano Conc. North','Trend Ano Conc. North','Mean Conc. South','Std Ano Conc. South','Trend Ano Conc. South'])
+  plt.setp(ax1.get_xticklabels(), fontname='Arial', fontsize=16)
+  plt.setp(ax1.get_yticklabels(), fontname='Arial', fontsize=16)
+  cax = fig.add_axes([0.75, 0.113, 0.01, 0.765])
+  cbar = fig.colorbar(im, cax=cax,ticks=[1,1.5,2,2.5,3,3.5,4,4.5,5], orientation="vertical")
+  cbar.ax.yaxis.set_ticks_position('both')
+  cbar.ax.tick_params(direction='in',length=2,labelsize=16)
+  if obs==0:#NSIDC-0051
+    ax1.set_title("(a) Models vs NSIDC-0051", fontname='Arial', fontsize=16)
+    plt.savefig('./Fig2a_Metrics_siconc_NSIDC0051.png', bbox_inches = "tight", dpi = 500)
+  else:#OSI450
+    ax1.set_title("(b) Models vs OSI-450", fontname='Arial', fontsize=16)
+    plt.savefig('./Fig2b_Metrics_siconc_OSI450.png', bbox_inches = "tight", dpi = 500)
+
+
+
+
