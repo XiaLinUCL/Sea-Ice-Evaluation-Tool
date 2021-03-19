@@ -7,7 +7,8 @@
 # 2) The heatmap function  
 # 3) The annotate heatmap function (The heatmap and annotate heatmap functions were written 
 #    by following https://matplotlib.org/stable/gallery/images_contours_and_fields/image_annotated_heatmap.html)
-# 4) A script to plot the mean seasonal cycle of IIEE in the Arctic and Antarctic
+# 4) A script calls the function 1) to calculate the IIEE from ice concentration,
+#    and plots the mean seasonal cycle of IIEE in the Arctic and Antarctic
 # 5) A script calls the function 1) to calculate the IIEE from ice concentration
 #    and to compute the ice edge location metrics
 # 6) A script calls the functions 2) and 3) to plot the ice edge metrics
