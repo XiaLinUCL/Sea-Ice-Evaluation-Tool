@@ -220,20 +220,21 @@ name1=['CMCC-CM2-HR4/2','CMCC-CM2-SR5/1','CMCC-CM2-SR5/2','EC-Earth3/1','EC-Eart
 for hems in range(2):
   if hems==0:
     i='aArctic'
-    cycle=NHcycle
+    #cycle=NHcycle
     cycle1=NHcycle1
     cycle2=NHcycle2
   else:
     i='bAntarctic'
-    cycle=SHcycle
+    #cycle=SHcycle
     cycle1=SHcycle1
     cycle2=SHcycle2
 
   fig=plt.figure(1)
+  plt.grid(linestyle=':', zorder=1)
+  plt.scatter(months, cycle2, color = 'black', label='NSIDC-0051', marker='x', s=28, zorder=35)
+  plt.scatter(months, cycle1, color = 'c', label='OSI-450', marker='+', s=28, zorder=30)
   months = np.arange(1,13)
   Mcycle=np.zeros((14,12))
-  plt.plot(months, cycle2, color = 'black', label='NSIDC-0051',linewidth=1.5)
-  plt.plot(months, cycle1, color = 'black', label='OSI-450',linewidth=1.5, linestyle='-.')
   for num in range(14):
     a=np.load(name[num])
     if hems==0:
@@ -245,34 +246,34 @@ for hems in range(2):
     cycle = np.array([np.nanmean(extent[m::12]) for m in range(12)])
     Mcycle[num,:] = cycle
     if (num==2):
-      plt.plot(months, cycle, color = colors[num+2], label=name1[num],linewidth=1.5,linestyle='-.',alpha=0.8) 
+      plt.plot(months, cycle, color = colors[num+2], label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
     elif (num==3):
-      plt.plot(months, cycle, color = 'darkgreen', label=name1[num],linewidth=1.5,alpha=0.8)
+      plt.plot(months, cycle, color = 'darkgreen', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
     elif (num==4):
-      plt.plot(months, cycle, color = 'darkgreen', label=name1[num],linewidth=1.5,linestyle='-.',alpha=0.8)
+      plt.plot(months, cycle, color = 'darkgreen', label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
     elif (num==8):
-      plt.plot(months, cycle, color = 'darkorange', label=name1[num],linewidth=1.5,alpha=0.8)
+      plt.plot(months, cycle, color = 'darkorange', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
     elif (num==9):
-      plt.plot(months, cycle, color = 'darkorange', label=name1[num],linewidth=1.5,linestyle='-.',alpha=0.8)
+      plt.plot(months, cycle, color = 'darkorange', label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
     elif (num==10):
-     plt.plot(months, cycle, color = 'tab:grey', label=name1[num],linewidth=1.5,alpha=0.8)
+     plt.plot(months, cycle, color = 'tab:grey', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
     elif (num==11):
-      plt.plot(months, cycle, color = 'tab:grey', label=name1[num],linewidth=1.5,linestyle='-.',alpha=0.8)
+      plt.plot(months, cycle, color = 'tab:grey', label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
     elif (num==12):
-      plt.plot(months, cycle, color = 'gold', label=name1[num],linewidth=1.5,alpha=0.8)
+      plt.plot(months, cycle, color = 'gold', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
     elif (num==13):
-      plt.plot(months, cycle, color = 'gold', label=name1[num],linewidth=1.5,linestyle='-.',alpha=0.8)
+      plt.plot(months, cycle, color = 'gold', label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
     elif (num==5):
-      plt.plot(months, cycle, color = 'blue', label=name1[num],linewidth=1.5,alpha=0.8)
+      plt.plot(months, cycle, color = 'blue', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
     else:
-      plt.plot(months, cycle, color = colors[num+3], label=name1[num],linewidth=1.5,alpha=0.8) 
+      plt.plot(months, cycle, color = colors[num+3], label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
 
   Mcycle0= np.nanmean(Mcycle,axis=0)
   Mcycle1 = (Mcycle[1,:]+Mcycle[3,:]+Mcycle[8,:]+Mcycle[10,:]+Mcycle[12,:])/5
   Mcycle2 = (Mcycle[2,:]+Mcycle[4,:]+Mcycle[9,:]+Mcycle[11,:]+Mcycle[13,:])/5
-  plt.plot(months, Mcycle0, color = 'red', label='Model mean',linewidth=1.5)
-  plt.plot(months, Mcycle1, color = 'firebrick', label='Model mean/1',linewidth=1.5)
-  plt.plot(months, Mcycle2, color = 'firebrick', label='Model mean/2',linewidth=1.5,linestyle='-.')
+  plt.plot(months, Mcycle0, color = 'firebrick', label='Model mean',linewidth=0.8, zorder=20)
+  plt.plot(months, Mcycle1, color = 'red', label='Model mean/1',linewidth=2, zorder=20)
+  plt.plot(months, Mcycle2, color = 'red', label='Model mean/2',linewidth=2,linestyle='-.', zorder=20)
 
   plt.xlabel('Month',fontname='Arial', fontsize=13)
   plt.legend(prop={'family':'Arial', "size":12})  
@@ -295,7 +296,6 @@ for hems in range(2):
   for tick in ax.get_yticklabels():
     tick.set_fontname('Arial')
     tick.set_fontsize(13)
-  plt.grid(linestyle=':')#, linewidth=2)
   plt.savefig('./Fig3'+str(i)+'.png', bbox_inches = "tight", dpi = 500)
   plt.close()
 
