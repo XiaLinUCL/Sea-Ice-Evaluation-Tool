@@ -6,10 +6,15 @@ CMIP6 OMIP data are freely available from the Earth System Grid Federation. Obse
 Contents
 ---------
 SICONC:    deal with ice concentration data, compute and plot the ice concentration metrics
+
 SIEXT:     compute the ice extent from ice concentration, plot the mean seasonal cycle and monthly anomalies of ice extent, compute and plot the ice extent metrics
+
 SIEDGE:    computes Intergrated Ice Edge Error (IIEE) from ice concentration, plot the mean seasonal cycle of IIEE, compute and plot the ice edge location metrics
+
 SITHICK:   deal with ice thickness data, compute and plot the ice thickness metrics
+
 SNOWDEPTH: deal with snow depth data, compute and plot the snow depth metrics
+
 SIDRIFT:   deal with ice drift data, compute and plot the ice-motion magnitude (MKE) and direction (vector correlation coefficient) metrics, plot the ice-vector correlation coefficient
 
 Usage Notes
