@@ -308,7 +308,7 @@ with open(inputfile, 'rb') as fid:
   idx = np.where(snowdep < -9000.00)
   snowdep[idx] = np.nan  
   field=snowdep[269:329,:,:]#2003-2007
-f = Dataset('/Volumes/Xia5/UCLouvain/sea ice data/OBS/sisnthick/SnowModel-LG/icemotion_daily_nh_25km_19781101_19781231_v4.1.nc', mode = "r")
+f = Dataset('/sea ice data/OBS/sisnthick/SnowModel-LG/icemotion_daily_nh_25km_19781101_19781231_v4.1.nc', mode = "r")
 lat = f.variables["latitude"][:,:]
 lon = f.variables["longitude"][:,:]
 a = lon.shape[0]
