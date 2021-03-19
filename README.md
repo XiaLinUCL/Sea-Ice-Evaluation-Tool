@@ -1,7 +1,8 @@
 The Sea Ice Evaluation Tool (SITool) is a performance metrics and diagnostics tool developed to evaluate the model skills in simulating the bi-polar sea ice concentration, extent, edge location, thickness, snow depth, and ice drift.
 
-This repository contains scripts to process model outputs from CMIP6 OMIP. Data should be obtained separately, which is available online.
-CMIP6 OMIP data are freely available from the Earth System Grid Federation. Observational references used in this paper are detailed in the paper submitted to Geoscientific Model Development (Lin et al. 2021).
+This repository contains scripts to process model outputs from CMIP6 OMIP. 
+
+Data should be obtained separately, which is available online. CMIP6 OMIP data are freely available from the Earth System Grid Federation. Observational references used in this paper are detailed in the paper submitted to Geoscientific Model Development (Lin et al. 2021).
 
 Contents
 ---------
