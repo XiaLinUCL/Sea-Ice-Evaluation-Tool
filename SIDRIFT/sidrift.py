@@ -406,7 +406,7 @@ from mpl_toolkits.axes_grid1 import AxesGrid
 from mpl_toolkits.basemap import Basemap, addcyclic
 # Read data and interp into same grid
 # Load NSIDC-0051 NH &SH grid 
-access_pr_file = 'sea ice data/OBS/siconc/NSIDC-0051/siconc_r1i1p1_mon_197901-201712_nh-psn25.nc'
+access_pr_file = '/sea ice data/OBS/siconc/NSIDC-0051/siconc_r1i1p1_mon_197901-201712_nh-psn25.nc'
 dset = xr.open_dataset(access_pr_file)
 NHlat1 = np.array(dset['latitude'][:,:])
 NHlon1 =np.array(dset['longitude'][:,:])
