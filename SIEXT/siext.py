@@ -8,9 +8,10 @@
 # 3) The heatmap function  
 # 4) The annotate heatmap function (The heatmap and annotate heatmap functions were written 
 #    by following https://matplotlib.org/stable/gallery/images_contours_and_fields/image_annotated_heatmap.html)
-# 5) A script to plot the mean seasonal cycle of ice extent in the Arctic and Antarctic
-# 6) A script to plot the monthly anomalies of ice extent from the 
-#    observational and model mean in the Arctic and Antarctic
+# 5) A script calls the function 1) to calculate the ice extent from ice concentration, 
+#    and then plots the mean seasonal cycle of ice extent in the Arctic and Antarctic
+# 6) A script plots the monthly anomalies of ice extent from the observational 
+#    and model means in the Arctic and Antarctic   
 # 7) A script calls the function 1) to calculate the ice extent from ice concentration
 #    and then calls the function 2) to compute the ice extent metrics
 # 8) A script calls the functions 3) and 4) to plot the ice extent metrics
