@@ -13,8 +13,9 @@
 # 7) A script deals with the input NetCDF data, and then calls the function 1); 
 # 8) A script calls the function 2) and then computes the ice-motion MKE metrics;
 # 9) A script calls the function 3) and then computes the ice-motion vector correlation coefficients metrics;
-# 10) A script plots the ice vector correlation coefficients in the Arctic and Antarctic;
-# 11) A script calls the functions 5) and 6) to plot the ice drift metrics;
+# 10) A script plots the ice vector correlation coefficients in the Arctic and Antarctic (Figs. 8-9);
+# 11) A script calls the functions 5) and 6) to plot the ice drift metrics (Fig. 10);
+# 12) A script plots the February and September mean ice-motion mean kinetic energy differences in the Arctic and Antarctic (Figs. A9-A12);
 
 # -------------------------------
 # PART 1) The rotation function  |
@@ -88,7 +89,7 @@ def compute_interp_correct(lon, lat, u, v, hems):
   '''
   #Interp into NSIDC-0051 grid
   #Load NSIDC-0051 NH &SH grid and siconc
-  access_pr_file = 'sea ice data/OBS/siconc/NSIDC-0051/siconc_r1i1p1_mon_197901-201712_nh-psn25.nc'
+  access_pr_file = '/sea ice data/OBS/siconc/NSIDC-0051/siconc_r1i1p1_mon_197901-201712_nh-psn25.nc'
   dset = xr.open_dataset(access_pr_file)
   NHlat1 = np.array(dset['latitude'][:,:])
   NHlon1 =np.array(dset['longitude'][:,:])
@@ -741,10 +742,10 @@ for obs in range(2):
   Metrics_sidrift[16,:]=(Metrics_sidrift[2,:]+Metrics_sidrift[4,:]+Metrics_sidrift[9,:]+Metrics_sidrift[11,:]+Metrics_sidrift[13,:])/5#OMIP2 mean
   np.savez('sidrift_metrics_vectorcorr_'+str(i)+'.npz', Metrics_sidrift, NHerror_mean1, SHerror_mean1, NHerror, SHerror, NHtyerror1, SHtyerror1)
 
-# --------------------------------------------------------------------------------------------
-# PART 10) A script plots the ice vector correlation coefficients in the Arctic and Antarctic |
-# --------------------------------------------------------------------------------------------
-name1=['ICDC-NSIDCv4.1','CMCC-CM2-SR5/1','CMCC-CM2-SR5/2','CMCC-CM2-HR4/2','EC-Earth3/1','EC-Earth3/2','GFDL-CM4/1','MIROC6/1','MIROC6/2','GFDL-OM4p5B/1','MRI-ESM2-0/1','MRI-ESM2-0/2','IPSL-CM6A-LR/1','NorESM2-LM/1','NorESM2-LM/2']
+# -------------------------------------------------------------------------------------------------------
+# PART 10) A script plots the ice vector correlation coefficients in the Arctic and Antarctic (Figs. 8-9)|
+# -------------------------------------------------------------------------------------------------------
+name1=['ICDC-NSIDCv4.1','CMCC-CM2-SR5/C','CMCC-CM2-SR5/J','CMCC-CM2-HR4/J','EC-Earth3/C','EC-Earth3/J','GFDL-CM4/C','MIROC6/C','MIROC6/J','GFDL-OM4p5B/C','MRI-ESM2-0/C','MRI-ESM2-0/J','IPSL-CM6A-LR/C','NorESM2-LM/C','NorESM2-LM/J']
 name2=['ICDCNSIDC','CMCC-CM2-SR501','CMCC-CM2-SR502','CMCC-CM2-HR402','EC-Earth301','EC-Earth302','GFDL-CM401','MIROC601','MIROC602','GFDL-OM4p5B01','MRI-ESM2-001','MRI-ESM2-002','IPSL-CM6A-LR01','NorESM2-LM01','NorESM2-LM02']
 
 a=np.load('sidrift_metrics_vectorcorr_KIMURA.npz')
@@ -771,7 +772,7 @@ for hems in range(2):
   for num in range(15):
     axes=plt.subplot(gs1[num]) 
     # Define a figure name
-    colmap = "RdYlGn"
+    colmap = "viridis"
     extmethod = "neither"
     varin='SIdrift'
     lb=0.1
@@ -843,22 +844,22 @@ for hems in range(2):
   cbar = fig.colorbar(cs, cax=cax,ticks=[0,0.2,0.4,0.6,0.8,1])
   cbar.ax.yaxis.set_ticks_position('both')
   cbar.ax.tick_params(direction='in',length=2)
-  cbar.set_label('Ice-motion vector correlation coefficient', fontname ='Arial', fontsize = 8, fontweight='bold')
+  cbar.set_label('Ice-motion vector correlation coefficient (vs. KIMURA)', fontname ='Arial', fontsize = 8, fontweight='bold')
   for l in cbar.ax.get_yticklabels():
     l.set_fontproperties('Arial') 
     l.set_fontsize(8) 
     l.set_fontweight('bold')
  
   # Save figure 
-  filename    = 'Fig.8-9' + varin + "corr_KIMURA_" + hemisphere     
+  filename    = 'Figure' + str(hems + 8).zfill(1)     
   plt.savefig(filename + ".png", bbox_inches = "tight", dpi = 500)
   plt.close("fig")
 
 # -------------------------------------------------------
-# PART 11) A script plots the ice drift metrics (heatmap)|
+# PART 11) A script plots the ice drift metrics (Fig. 10)|
 # -------------------------------------------------------
-Models=['CMCC-CM2-HR4/2','CMCC-CM2-SR5/1','CMCC-CM2-SR5/2','EC-Earth3/1','EC-Earth3/2','GFDL-CM4/1','GFDL-OM4p5B/1','IPSL-CM6A-LR/1','MIROC6/1','MIROC6/2','MRI-ESM2-0/1','MRI-ESM2-0/2','NorESM2-LM/1','NorESM2-LM/2','Model mean','Model mean/1','Model mean/2']
-Variables=['Mean Kin. En. North', 'Mean Kin. En. South','Mean Kin. En. North', 'Mean Kin. En. South']
+Models=['CMCC-CM2-HR4/J','CMCC-CM2-SR5/C','CMCC-CM2-SR5/J','EC-Earth3/C','EC-Earth3/J','GFDL-CM4/C','GFDL-OM4p5B/C','IPSL-CM6A-LR/C','MIROC6/C','MIROC6/J','MRI-ESM2-0/C','MRI-ESM2-0/J','NorESM2-LM/C','NorESM2-LM/J','Model mean','Model mean/C','Model mean/J']
+Variables=['Mean Kin. En. NH', 'Mean Kin. En. SH','Mean Kin. En. NH', 'Mean Kin. En. SH']
 values=np.zeros((17, 4))
 a=np.load('sidrift_metrics_MKE_ICDC-NSIDC.npz')
 values[:,0:2]=a['arr_0']
@@ -872,17 +873,17 @@ fig,ax1 = plt.subplots(1, figsize=(figwidth, figheight), dpi=dpi)
 im,cbar = heatmap(values, Models,Variables, ax=ax1, cmap="OrRd", vmin=1, vmax=5) 
 texts = annotate_heatmap(im, valfmt="{x:.2f}",size=16,threshold=4)
 cbar.remove()
-ax1.set_xticklabels(['Mean Kin. En. North', 'Mean Kin. En. South','Mean Kin. En. North', 'Mean Kin. En. South'])
+ax1.set_xticklabels(['Mean Kin. En. NH', 'Mean Kin. En. SH','Mean Kin. En. NH', 'Mean Kin. En. SH'])
 plt.setp(ax1.get_xticklabels(), fontname='Arial', fontsize=16)
 plt.setp(ax1.get_yticklabels(), fontname='Arial', fontsize=16)
 cax = fig.add_axes([0.75, 0.113, 0.01, 0.765])
 cbar = fig.colorbar(im, cax=cax,ticks=[1,2,3,4,5], orientation="vertical")
 cbar.ax1.yaxis.set_ticks_position('both')
 cbar.ax1.tick_params(direction='in',length=2,labelsize=16)
-ax1.set_title("(a) Models vs NSIDC and KIMURA", fontname='Arial', fontsize=16)
-plt.savefig('./10a_Metrics_sidrift_MKE.png', bbox_inches = "tight", dpi = 500)
+ax1.set_title("(a) Drift magnitude: \n models vs. NSIDC & KIMURA", fontname='Arial', fontsize=16)
+plt.savefig('./Figure10a.png', bbox_inches = "tight", dpi = 500)
 
-Variables=['Vect. Corr. North','Vect. Corr. South','Vect. Corr. North','Vect. Corr. South']
+Variables=['Vect. Corr. NH','Vect. Corr. SH','Vect. Corr. NH','Vect. Corr. SH']
 values=np.zeros((17, 4))
 a=np.load('sidrift_metrics_vectorcorr_ICDC-NSIDC.npz')
 values[:,0:2]=a['arr_0']
@@ -896,13 +897,160 @@ fig,ax1 = plt.subplots(1, figsize=(figwidth, figheight), dpi=dpi)
 im,cbar = heatmap(values, Models,Variables, ax=ax1, cmap="OrRd", vmin=1, vmax=1.3) 
 texts = annotate_heatmap(im, valfmt="{x:.2f}",size=16,threshold=1.24)
 cbar.remove()
-ax1.set_xticklabels(['Vect. Corr. North','Vect. Corr. South','Vect. Corr. North','Vect. Corr. South'])
+ax1.set_xticklabels(['Vect. Corr. NH','Vect. Corr. SH','Vect. Corr. NH','Vect. Corr. SH'])
 plt.setp(ax1.get_xticklabels(), fontname='Arial', fontsize=16)
 plt.setp(ax1.get_yticklabels(), fontname='Arial', fontsize=16)
 cax = fig.add_axes([0.75, 0.113, 0.01, 0.765])
 cbar = fig.colorbar(im, cax=cax,ticks=[1,1.1,1.2,1.3], orientation="vertical")
 cbar.ax1.yaxis.set_ticks_position('both')
 cbar.ax1.tick_params(direction='in',length=2,labelsize=16)
-ax1.set_title("(b) Models vs NSIDC and KIMURA", fontname='Arial', fontsize=16)
-plt.savefig('./10b_Metrics_sidrift_vectorcorr.png', bbox_inches = "tight", dpi = 500)
+ax1.set_title("(b) Drift direction: \n models vs. NSIDC & KIMURA", fontname='Arial', fontsize=16)
+plt.savefig('./Figure10b.png', bbox_inches = "tight", dpi = 500)
 
+# ---------------------------------------------------------------------------------------
+# PART 12) A script plots the February and September mean ice-motion mean kinetic energy |
+#          differences in the Arctic and Antarctic (Figs. A9-A12);                       |
+# ---------------------------------------------------------------------------------------
+a=np.load('KIMURA_NH_200301_200712_siuv_corrected') 
+NHlon_curv=a['arr_0']
+NHlat_curv=a['arr_1']
+u=a['arr_2'][0:60,:,:]/(24*3600/10**3)  
+v=a['arr_3'][0:60,:,:]/(24*3600/10**3) 
+NHMKE=(u**2+v**2)/2
+NHMKE1 = np.array([np.nanmean(NHMKE[m::12,:,:], axis=0) for m in range(12)])
+a=np.load('KIMURA_SH_200301_200712_siuv_corrected')
+SHlon_curv=a['arr_0']
+SHlat_curv=a['arr_1']
+u=a['arr_2'][0:60,:,:]/(24*3600/10**3)  
+v=a['arr_3'][0:60,:,:]/(24*3600/10**3) 
+SHMKE=(u**2+v**2)/2
+SHMKE1 = np.array([np.nanmean(SHMKE[m::12,:,:], axis=0) for m in range(12)])
+
+# Define a figure properties
+varin='MKE'
+units='($\mathregular{m^2}$/$\mathregular{s^2}$)'
+
+name=['ICDC-NSIDCv4.1','CMCC-CM2-SR5/C','CMCC-CM2-SR5/J','CMCC-CM2-HR4/J','EC-Earth3/C','EC-Earth3/J','GFDL-CM4/C','MIROC6/C','MIROC6/J','GFDL-OM4p5B/C','MRI-ESM2-0/C','MRI-ESM2-0/J','IPSL-CM6A-LR/C','NorESM2-LM/C','NorESM2-LM/J']#!!!!!!
+filesNH=['ICDC_NSIDC_NH_200301_200712_siuv_corrected.npz','CMCC-CM2-SR5_omip1_200301_200712_siuv_corrected.npz','CMCC-CM2-SR5_omip2_200301_200712_siuv_corrected.npz','CMCC-CM2-HR4_omip2_200301_200712_siuv_corrected.npz','EC-Earth3_omip1_r1_200301_200712_siuv_corrected.npz','EC-Earth3_omip2_r1_200301_200712_siuv_corrected.npz','GFDL-CM4_200301_200712_siuv_corrected.npz','MIROC6_omip1_r1i1p_200301_200712_siuv_corrected.npz','MIROC6_omip2_r1i1p_200301_200712_siuv_corrected.npz','GFDL-OM4p5B_200301_200712_siuv_corrected.npz','MRI-ESM2-0_omip1_r_200301_200712_siuv_corrected.npz','MRI-ESM2-0_omip2_r_200301_200712_siuv_corrected.npz','IPSL-CM6A-LR_200301_200712_siuv_corrected.npz','NorESM2-LM_omip1_r_200301_200712_siuv_corrected.npz','NorESM2-LM_omip2_r_200301_200712_siuv_corrected.npz']
+filesSH=['ICDC_NSIDC_SH_200301_200712_siuv_corrected.npz','CMCC-CM2-SR5_omip1_200301_200712_siuv_SH_corrected.npz','CMCC-CM2-SR5_omip2_200301_200712_siuv_SH_corrected.npz','CMCC-CM2-HR4_omip2_200301_200712_siuv_SH_corrected.npz','EC-Earth3_omip1_r1_200301_200712_siuv_SH_corrected.npz','EC-Earth3_omip2_r1_200301_200712_siuv_SH_corrected.npz','GFDL-CM4_200301_200712_siuv_SH_corrected.npz','MIROC6_omip1_r1i1p_200301_200712_siuv_SH_corrected.npz','MIROC6_omip2_r1i1p_200301_200712_siuv_SH_corrected.npz','GFDL-OM4p5B_200301_200712_siuv_SH_corrected.npz','MRI-ESM2-0_omip1_r_200301_200712_siuv_SH_corrected.npz','MRI-ESM2-0_omip2_r_200301_200712_siuv_SH_corrected.npz','IPSL-CM6A-LR_200301_200712_siuv_SH_corrected.npz','NorESM2-LM_omip1_r_200301_200712_siuv_SH_corrected.npz','NorESM2-LM_omip2_r_200301_200712_siuv_SH_corrected.npz']
+
+for jt in range(4):
+  if jt==0:
+    jt1=8
+    hemisphere = "n"
+    lat=NHlat_curv
+    lon=NHlon_curv
+    files=filesNH
+    MKE0=NHMKE1
+  elif jt==1:
+    jt1=1
+    hemisphere = "n"
+    lat=NHlat_curv
+    lon=NHlon_curv
+    files=filesNH
+    MKE0=NHMKE1
+  elif jt==2:
+    jt1=1
+    hemisphere = "s"
+    lat=SHlat_curv 
+    lon=SHlon_curv
+    files=filesSH
+    MKE0=SHMKE1
+  elif jt==3:
+    jt1=8
+    hemisphere = "s"
+    lat=SHlat_curv 
+    lon=SHlon_curv
+    files=filesSH
+    MKE0=SHMKE1
+
+  fig=plt.figure(figsize=(5, 9))
+  gs1 = gridspec.GridSpec(5, 3)
+  gs1.update(wspace=0.04, hspace=0.06) # set the spacing between axes. 
+  for num in range(15):  
+    axes=plt.subplot(gs1[num])
+    if num==0:
+      a=np.load(files[num])
+      u=a['arr_2'][0:60,:,:]*1.357
+      v=a['arr_3'][0:60,:,:]*1.357
+    else:
+      a=np.load(files[num])
+      u=a['arr_2'][0:60,:,:]/(24*3600/10**3)  
+      v=a['arr_3'][0:60,:,:]/(24*3600/10**3) 
+    MKE=(u**2+v**2)/2
+    MKE1 = np.array([np.nanmean(MKE[m::12,:,:], axis=0) for m in range(12)])
+    field=MKE1-MKE0
+
+    # Create the colorbar
+    # Load the colormap
+    lb=-0.008
+    ub=0.00800001
+    nsteps=0.001
+    colmap ='RdBu_r'
+    extmethod = "both"
+    clevs = np.arange(lb, ub, nsteps)
+    cmap = eval("plt.cm." + colmap)
+    # Colors for values outside the colorbar
+    # Get first and last colors of the colormap
+    first_col = cmap(0)[0:3]
+    last_col  = cmap(255)[0:3]
+    first_col1 = cmap(10)[0:3]
+    # Create "over" and "under" colors.
+    # Take respectively the latest and first color and
+    # darken them by 50%
+    col_under = [i / 2.0 for i in first_col]
+    col_over  = [i / 2.0 for i in last_col ]
+ 
+    # Create a projection 
+    # Determine if we are in the northern hemisphere or in the Southern hemisphere.
+    if hemisphere == "n":
+      boundlat = 50
+      l0 = 0.
+    elif hemisphere == "s":
+      boundlat = -50
+      l0 = 180.
+    else:
+      sys.exit("(map_polar_field) Hemisphere unkown")
+
+    # Projection name
+    projname = hemisphere + "plaea" 
+    map = Basemap(projection = projname,lat_0=90, boundinglat = boundlat, lon_0 = l0, resolution = 'l', round=True, ax=axes)
+    x, y = map(lon, lat)
+
+    # Plot the figure 
+    field1 = np.squeeze(field[jt1, :, :])
+    # Draw coastlines, country boundaries, fill continents, meridians & parallels
+    map.drawcoastlines(linewidth = 0.15)
+    map.fillcontinents(color = 'silver', lake_color = 'white')
+    map.drawmeridians(np.arange(0, 360, 60), linewidth=0.9, latmax=80, color='silver')
+    map.drawparallels(np.arange(60, 90, 10), linewidth=0.9, labels=[True,True,True,True], color='silver',fontsize=1)
+    if hemisphere == "s":
+      map.drawparallels(np.arange(-90, -55, 10), linewidth=0.9, labels=[True,True,True,True], color='silver',fontsize=1) 
+    map.drawlsmask(ocean_color='white')
+    meridians = np.arange(0, 360, 60)
+    circle = map.drawmapboundary(linewidth=1, color='black')
+    circle.set_clip_on(False)
+    # Create a contourf object called "cs"
+    norm = colors.DivergingNorm(vmin=lb, vcenter=0, vmax=ub)
+    cs = map.contourf(x, y, field1, clevs, cmap = cmap, vmin=lb, vmax=ub, norm = norm, latlon = False, extend = extmethod)
+    cs.cmap.set_under(col_under)#white')#
+    cs.cmap.set_over(col_over)
+    axes.set_title(name[num],fontname='Arial', fontsize=7.5,fontweight='bold', loc='center',y=1.0, pad=3)
+  
+  cax = fig.add_axes([0.93, 0.25, 0.03, 0.49])
+  cbar = fig.colorbar(cs, cax=cax,ticks=[-0.008,-0.004,0,0.004,0.008])
+  cbar.ax.yaxis.set_ticks_position('both')
+  cbar.ax.tick_params(direction='in',length=2)
+  cbar.set_label('Ice-motion MKE difference (vs. KIMURA, $\mathregular{m^2}$/$\mathregular{s^2}$)' ,fontname = 'Arial', fontsize = 8 , fontweight = 'bold')
+  for l in cbar.ax.get_yticklabels():
+    l.set_fontproperties('Arial') 
+    l.set_fontsize(8) 
+    l.set_fontweight('bold')
+ 
+  # Save figure 
+  filename    = 'FigureA' + str(jt + 9).zfill(1) ! 
+  imageformat = "png"  
+  dpi         = 500     
+  plt.savefig(filename + "." + imageformat, bbox_inches = "tight", dpi = dpi)
+  print('Figure ' + filename + "." + imageformat + " printed")
+  plt.close("fig")
