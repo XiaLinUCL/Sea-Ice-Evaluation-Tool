@@ -9,12 +9,12 @@
 # 4) The annotate heatmap function (The heatmap and annotate heatmap functions were written 
 #    by following https://matplotlib.org/stable/gallery/images_contours_and_fields/image_annotated_heatmap.html)
 # 5) A script calls the function 1) to calculate the ice extent from ice concentration, 
-#    and then plots the mean seasonal cycle of ice extent in the Arctic and Antarctic
+#    and then plots the mean seasonal cycle of ice extent in the Arctic and Antarctic (Fig. 3)
 # 6) A script plots the monthly anomalies of ice extent from the observational 
-#    and model means in the Arctic and Antarctic   
+#    and model means in the Arctic and Antarctic (Fig. 4)  
 # 7) A script calls the function 1) to calculate the ice extent from ice concentration
 #    and then calls the function 2) to compute the ice extent metrics
-# 8) A script calls the functions 3) and 4) to plot the ice extent metrics
+# 8) A script calls the functions 3) and 4) to plot the ice extent metrics (Figs. 5a,b)
 
 # ---------------------------------------------
 # PART 1) The ice extent calculation function  |   
@@ -165,9 +165,9 @@ def annotate_heatmap(im, data=None, valfmt="{x:.2f}",
             
     return texts
 
-# -------------------------------------------------------------------------------------------
-# PART 5) A script to plot the mean seasonal cycle of ice extent in the Arctic and Antarctic |
-# -------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------
+# PART 5) A script to plot the mean seasonal cycle of ice extent in the Arctic and Antarctic (Fig. 3) |
+# ----------------------------------------------------------------------------------------------------
 import os
 import sys
 import xarray as xr
@@ -187,7 +187,7 @@ import matplotlib.gridspec as gridspec
 from mpl_toolkits.axes_grid1 import AxesGrid
 from mpl_toolkits.basemap import Basemap, addcyclic
 
-np.random.seed(3) # to fix the colors of CMIP6
+np.random.seed(3) #to fix the colors of CMIP6
 colors = [np.random.random(3) for j in range(16)]
 #NSIDC0051
 a=np.load('NSIDC0051_1980_2007_siconc.npz')
@@ -198,11 +198,11 @@ SHcellarea=a['arr_7']
 NHextent1=compute_extent(NHconcentration1, NHcellarea, threshold = 0.15, mask = 1)
 SHextent1=compute_extent(SHconcentration1, SHcellarea, threshold = 0.15, mask = 1)
 #seasonal cycle
-#siextent
 NHcycle1 = np.array([np.nanmean(NHextent1[m::12]) for m in range(12)])
 SHcycle1 = np.array([np.nanmean(SHextent1[m::12]) for m in range(12)])
 NHano1 = np.array([NHextent1[j] - NHcycle1[j%12] for j in range(len(NHextent1))])
 SHano1 = np.array([SHextent1[j] - SHcycle1[j%12] for j in range(len(SHextent1))])
+
 #OSI450
 a=np.load('OSI450_1980_2007_siconc.npz')
 NHconcentration2=a['arr_2']/100
@@ -210,100 +210,169 @@ SHconcentration2=a['arr_5']/100
 NHextent2=compute_extent(NHconcentration2, NHcellarea, threshold = 0.15, mask = 1)
 SHextent2=compute_extent(SHconcentration2, SHcellarea, threshold = 0.15, mask = 1)
 #seasonal cycle
-#siextent
 NHcycle2 = np.array([np.nanmean(NHextent2[m::12]) for m in range(12)])
 SHcycle2 = np.array([np.nanmean(SHextent2[m::12]) for m in range(12)])
 NHano2 = np.array([NHextent2[j] - NHcycle2[j%12] for j in range(len(NHextent2))])
 SHano2 = np.array([SHextent2[j] - SHcycle2[j%12] for j in range(len(SHextent2))])
+
+fig,((ax1, ax2), (ax3,ax4)) = plt.subplots(2,2, figsize=(12,9))
+months = np.arange(1,13)
+ax1.grid(linestyle=':', zorder=1)
+ax1.scatter(months, NHcycle2, color = 'black', label='NSIDC-0051', marker='x', s=28, zorder=35)
+ax1.scatter(months, NHcycle1, color = 'c', label='OSI-450', marker='+', s=28, zorder=30)
 name=['CMCC-CM2-HR4_omip2_1980_2007_siconc.npz', 'CMCC-CM2-SR5_omip1_1980_2007_siconc.npz', 'CMCC-CM2-SR5_omip2_1980_2007_siconc.npz', 'EC-Earth3_omip1_r1_1980_2007_siconc.npz','EC-Earth3_omip2_r1_1980_2007_siconc.npz', 'GFDL-CM4_omip1_r1i_1980_2007_siconc.npz', 'GFDL-OM4p5B_omip1__1980_2007_siconc.npz', 'IPSL-CM6A-LR_omip1_1980_2007_siconc.npz',  'MIROC6_omip1_r1i1p_1980_2007_siconc.npz', 'MIROC6_omip2_r1i1p_1980_2007_siconc.npz', 'MRI-ESM2-0_omip1_r_1980_2007_siconc.npz', 'MRI-ESM2-0_omip2_r_1980_2007_siconc.npz', 'NorESM2-LM_omip1_r_1980_2007_siconc.npz', 'NorESM2-LM_omip2_r_1980_2007_siconc.npz']
-name1=['CMCC-CM2-HR4/2','CMCC-CM2-SR5/1','CMCC-CM2-SR5/2','EC-Earth3/1','EC-Earth3/2','GFDL-CM4/1','GFDL-OM4p5B/1','IPSL-CM6A-LR/1','MIROC6/1','MIROC6/2','MRI-ESM2-0/1','MRI-ESM2-0/2','NorESM2-LM/1','NorESM2-LM/2']
-#Arctic&Antarctic Figs.3a&b
-for hems in range(2):
-  if hems==0:
-    i='aArctic'
-    #cycle=NHcycle
-    cycle1=NHcycle1
-    cycle2=NHcycle2
+name1=['CMCC-CM2-HR4/J','CMCC-CM2-SR5/C','CMCC-CM2-SR5/J','EC-Earth3/C','EC-Earth3/J','GFDL-CM4/C','GFDL-OM4p5B/C','IPSL-CM6A-LR/C','MIROC6/C','MIROC6/J','MRI-ESM2-0/C','MRI-ESM2-0/J','NorESM2-LM/C','NorESM2-LM/J']
+months = np.arange(1,13)
+MNHcycle=np.zeros((14,12))
+for num in range(14):
+  a=np.load(path + name[num])
+  NHconcentration=a['arr_2']/100
+  NHextent=compute_extent(NHconcentration, NHcellarea, threshold = 0.15, mask = 1)
+  NHcycle = np.array([np.nanmean(NHextent[m::12]) for m in range(12)])
+  MNHcycle[num,:] = NHcycle
+MNHcycle0= np.nanmean(MNHcycle,axis=0)
+MNHcycle11 = (MNHcycle[1,:]+MNHcycle[3,:]+MNHcycle[8,:]+MNHcycle[10,:]+MNHcycle[12,:])/5
+MNHcycle22 = (MNHcycle[2,:]+MNHcycle[4,:]+MNHcycle[9,:]+MNHcycle[11,:]+MNHcycle[13,:])/5
+ax1.plot(months, MNHcycle0, color = 'firebrick', label='Model mean',linewidth=2, zorder=20)
+ax1.plot(months, MNHcycle11, color = 'red', label='Model mean/C',linewidth=2, zorder=20)
+ax1.plot(months, MNHcycle22, color = 'red', label='Model mean/J',linewidth=2,linestyle='-.', zorder=20)
+ax1.set_ylabel('Arctic ice extent ($\mathregular{10^6}$ $\mathregular{km^2}$)', fontsize=13, fontweight = 'bold')
+xticks=ax1.set_xticks(np.arange(1,13,1))
+yticks=ax1.set_yticks(np.arange(6,17,2)) 
+ax1.text(11, 15.5, '(a)', fontsize=13, fontweight = 'bold')
+labels = [item.get_text() for item in ax1.get_xticklabels()]
+labels = ['J','F','M','A','M','J','J','A','S','O','N','D']
+ax1.set_xticklabels(labels,fontname='Arial', fontsize=13)
+for tick in ax1.get_yticklabels():
+  tick.set_fontname('Arial')
+  tick.set_fontsize(13)
+
+ax2.grid(linestyle=':', zorder=1)
+ax2.scatter(months, SHcycle2, color = 'black', label='NSIDC-0051', marker='x', s=28, zorder=35)
+ax2.scatter(months, SHcycle1, color = 'c', label='OSI-450', marker='+', s=28, zorder=30)
+months = np.arange(1,13)
+MSHcycle=np.zeros((14,12))
+for num in range(14):
+  a=np.load(path + name[num])
+  SHconcentration=a['arr_5']/100
+  SHextent=compute_extent(SHconcentration, SHcellarea, threshold = 0.15, mask = 1)
+  SHcycle = np.array([np.nanmean(SHextent[m::12]) for m in range(12)])
+  MSHcycle[num,:] = SHcycle
+MSHcycle0= np.nanmean(MSHcycle,axis=0)
+MSHcycle11 = (MSHcycle[1,:]+MSHcycle[3,:]+MSHcycle[8,:]+MSHcycle[10,:]+MSHcycle[12,:])/5
+MSHcycle22 = (MSHcycle[2,:]+MSHcycle[4,:]+MSHcycle[9,:]+MSHcycle[11,:]+MSHcycle[13,:])/5
+ax2.plot(months, MSHcycle0, color = 'firebrick', label='Model mean',linewidth=2, zorder=20)
+ax2.plot(months, MSHcycle11, color = 'red', label='Model mean/C',linewidth=2, zorder=20)
+ax2.plot(months, MSHcycle22, color = 'red', label='Model mean/J',linewidth=2,linestyle='-.', zorder=20)
+ax2.set_ylabel('Antarctic ice extent ($\mathregular{10^6}$ $\mathregular{km^2}$)', fontsize=13, fontweight = 'bold')
+ax2.legend(prop={'family':'Arial', "size":13, 'weight':'bold'})
+ax2.set_xticks(np.arange(1,13,1))
+ax2.set_yticks(np.arange(0,21,2))
+ax2.text(11, 19, '(b)', fontsize=13, fontweight = 'bold')
+ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5), frameon=False, borderaxespad = 0.,prop={'family':'Arial', "size":12, 'weight':'bold'})#'center left'
+labels = [item.get_text() for item in ax2.get_xticklabels()]
+labels = ['J','F','M','A','M','J','J','A','S','O','N','D']
+ax2.set_xticklabels(labels,fontname='Arial', fontsize=13)
+for tick in ax2.get_yticklabels():
+  tick.set_fontname('Arial')
+  tick.set_fontsize(13)
+
+months = np.arange(1,13)
+ax3.grid(linestyle=':', zorder=1)
+name=['CMCC-CM2-HR4_omip2_1980_2007_siconc.npz', 'CMCC-CM2-SR5_omip1_1980_2007_siconc.npz', 'CMCC-CM2-SR5_omip2_1980_2007_siconc.npz', 'EC-Earth3_omip1_r1_1980_2007_siconc.npz','EC-Earth3_omip2_r1_1980_2007_siconc.npz', 'GFDL-CM4_omip1_r1i_1980_2007_siconc.npz', 'GFDL-OM4p5B_omip1__1980_2007_siconc.npz', 'IPSL-CM6A-LR_omip1_1980_2007_siconc.npz',  'MIROC6_omip1_r1i1p_1980_2007_siconc.npz', 'MIROC6_omip2_r1i1p_1980_2007_siconc.npz', 'MRI-ESM2-0_omip1_r_1980_2007_siconc.npz', 'MRI-ESM2-0_omip2_r_1980_2007_siconc.npz', 'NorESM2-LM_omip1_r_1980_2007_siconc.npz', 'NorESM2-LM_omip2_r_1980_2007_siconc.npz']
+name1=['CMCC-CM2-HR4/J','CMCC-CM2-SR5/C','CMCC-CM2-SR5/J','EC-Earth3/C','EC-Earth3/J','GFDL-CM4/C','GFDL-OM4p5B/C','IPSL-CM6A-LR/C','MIROC6/C','MIROC6/J','MRI-ESM2-0/C','MRI-ESM2-0/J','NorESM2-LM/C','NorESM2-LM/J']
+months = np.arange(1,13)
+MNHcycle=np.zeros((14,12))
+for num in range(14):
+  a=np.load(path + name[num])
+  NHconcentration=a['arr_2']/100
+  NHextent=compute_extent(NHconcentration, NHcellarea, threshold = 0.15, mask = 1)
+  NHcycle = np.array([np.nanmean(NHextent[m::12]) for m in range(12)])
+  MNHcycle[num,:] = NHcycle
+  if (num==2):
+    ax3.plot(months, NHcycle, color = colors[num+2], label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10) 
+  elif (num==3):
+    ax3.plot(months, NHcycle, color = 'darkgreen', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==4):
+    ax3.plot(months, NHcycle, color = 'darkgreen', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10)
+  elif (num==8):
+    ax3.plot(months, NHcycle, color = 'darkorange', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==9):
+    ax3.plot(months, NHcycle, color = 'darkorange', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10)
+  elif (num==10):
+    ax3.plot(months, NHcycle, color = 'tab:grey', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==11):
+    ax3.plot(months, NHcycle, color = 'tab:grey', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10)
+  elif (num==12):
+    ax3.plot(months, NHcycle, color = 'gold', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==13):
+    ax3.plot(months, NHcycle, color = 'gold', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10)
+  elif (num==5):
+    ax3.plot(months, NHcycle, color = 'blue', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
   else:
-    i='bAntarctic'
-    #cycle=SHcycle
-    cycle1=SHcycle1
-    cycle2=SHcycle2
+    ax3.plot(months, NHcycle, color = colors[num+3], label=name1[num],linewidth=2,alpha=0.8, zorder=10) 
+ax3.set_xlabel('Month',fontsize=13, fontweight = 'bold')
+ax3.set_ylabel('Arctic ice extent ($\mathregular{10^6}$ $\mathregular{km^2}$)', fontsize=13, fontweight = 'bold')
+xticks=ax3.set_xticks(np.arange(1,13,1))
+yticks=ax3.set_yticks(np.arange(2,19,2)) 
+ax3.text(11, 17, '(c)', fontsize=13, fontweight = 'bold')
+labels = [item.get_text() for item in ax3.get_xticklabels()]
+labels = ['J','F','M','A','M','J','J','A','S','O','N','D']
+ax3.set_xticklabels(labels,fontname='Arial', fontsize=13)
+for tick in ax3.get_yticklabels():
+  tick.set_fontname('Arial')
+  tick.set_fontsize(13)
 
-  fig=plt.figure(1)
-  plt.grid(linestyle=':', zorder=1)
-  plt.scatter(months, cycle2, color = 'black', label='NSIDC-0051', marker='x', s=28, zorder=35)
-  plt.scatter(months, cycle1, color = 'c', label='OSI-450', marker='+', s=28, zorder=30)
-  months = np.arange(1,13)
-  Mcycle=np.zeros((14,12))
-  for num in range(14):
-    a=np.load(name[num])
-    if hems==0:
-      concentration=a['arr_2']/100
-      extent=compute_extent(concentration, NHcellarea, threshold = 0.15, mask = 1)
-    else:
-      concentration=a['arr_5']/100
-      extent=compute_extent(concentration, SHcellarea, threshold = 0.15, mask = 1)
-    cycle = np.array([np.nanmean(extent[m::12]) for m in range(12)])
-    Mcycle[num,:] = cycle
-    if (num==2):
-      plt.plot(months, cycle, color = colors[num+2], label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
-    elif (num==3):
-      plt.plot(months, cycle, color = 'darkgreen', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
-    elif (num==4):
-      plt.plot(months, cycle, color = 'darkgreen', label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
-    elif (num==8):
-      plt.plot(months, cycle, color = 'darkorange', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
-    elif (num==9):
-      plt.plot(months, cycle, color = 'darkorange', label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
-    elif (num==10):
-     plt.plot(months, cycle, color = 'tab:grey', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
-    elif (num==11):
-      plt.plot(months, cycle, color = 'tab:grey', label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
-    elif (num==12):
-      plt.plot(months, cycle, color = 'gold', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
-    elif (num==13):
-      plt.plot(months, cycle, color = 'gold', label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
-    elif (num==5):
-      plt.plot(months, cycle, color = 'blue', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
-    else:
-      plt.plot(months, cycle, color = colors[num+3], label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
-
-  Mcycle0= np.nanmean(Mcycle,axis=0)
-  Mcycle1 = (Mcycle[1,:]+Mcycle[3,:]+Mcycle[8,:]+Mcycle[10,:]+Mcycle[12,:])/5
-  Mcycle2 = (Mcycle[2,:]+Mcycle[4,:]+Mcycle[9,:]+Mcycle[11,:]+Mcycle[13,:])/5
-  plt.plot(months, Mcycle0, color = 'firebrick', label='Model mean',linewidth=0.8, zorder=20)
-  plt.plot(months, Mcycle1, color = 'red', label='Model mean/1',linewidth=2, zorder=20)
-  plt.plot(months, Mcycle2, color = 'red', label='Model mean/2',linewidth=2,linestyle='-.', zorder=20)
-
-  plt.xlabel('Month',fontname='Arial', fontsize=13)
-  plt.legend(prop={'family':'Arial', "size":12})  
-  ax = fig.gca()
-  xticks=ax.set_xticks(np.arange(1,13,1))
-  if hems==0:
-    plt.ylabel('Arctic ice extent ($\mathregular{10^6}$ $\mathregular{km^2}$)',fontname='Arial', fontsize=13)
-    yticks=ax.set_yticks(np.arange(2,20,2)) 
-    ax.text(11, 17.5, '(a)', fontsize=13, fontweight = 'bold')
+ax4.grid(linestyle=':', zorder=1)
+months = np.arange(1,13)
+MSHcycle=np.zeros((14,12))
+for num in range(14):
+  a=np.load(path + name[num])
+  SHconcentration=a['arr_5']/100
+  SHextent=compute_extent(SHconcentration, SHcellarea, threshold = 0.15, mask = 1)
+  SHcycle = np.array([np.nanmean(SHextent[m::12]) for m in range(12)])
+  MSHcycle[num,:] = SHcycle
+  if (num==2):
+    ax4.plot(months, SHcycle, color = colors[num+2], label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10) 
+  elif (num==3):
+    ax4.plot(months, SHcycle, color = 'darkgreen', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==4):
+    ax4.plot(months, SHcycle, color = 'darkgreen', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10)
+  elif (num==8):
+    ax4.plot(months, SHcycle, color = 'darkorange', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==9):
+    ax4.plot(months, SHcycle, color = 'darkorange', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10)
+  elif (num==10):
+    ax4.plot(months, SHcycle, color = 'tab:grey', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==11):
+    ax4.plot(months, SHcycle, color = 'tab:grey', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10)
+  elif (num==12):
+    ax4.plot(months, SHcycle, color = 'gold', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==13):
+    ax4.plot(months, SHcycle, color = 'gold', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10)
+  elif (num==5):
+    ax4.plot(months, SHcycle, color = 'blue', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
   else:
-    plt.ylabel('Antarctic ice extent ($\mathregular{10^6}$ $\mathregular{km^2}$)',fontname='Arial', fontsize=13)
-    yticks=ax.set_yticks(np.arange(0,24,2)) 
-    ax.text(11, 20.5, '(b)', fontsize=13, fontweight = 'bold')
-  box = ax.get_position()
-  ax.set_position([box.x0, box.y0, box.width * 0.78, box.height])
-  ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), frameon=False)
-  labels = [item.get_text() for item in ax.get_xticklabels()]
-  labels = ['J','F','M','A','M','J','J','A','S','O','N','D']
-  ax.set_xticklabels(labels,fontname='Arial', fontsize=13)
-  for tick in ax.get_yticklabels():
-    tick.set_fontname('Arial')
-    tick.set_fontsize(13)
-  plt.savefig('./Fig3'+str(i)+'.png', bbox_inches = "tight", dpi = 500)
-  plt.close()
+    ax4.plot(months, SHcycle, color = colors[num+3], label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+ax4.set_xlabel('Month',fontsize=13, fontweight = 'bold')
+ax4.set_ylabel('Antarctic ice extent ($\mathregular{10^6}$ $\mathregular{km^2}$)', fontsize=13, fontweight = 'bold')
+ax4.set_xticks(np.arange(1,13,1))
+ax4.set_yticks(np.arange(0,24,2))
+ax4.text(11, 20.5, '(d)', fontsize=13, fontweight = 'bold')
+ax4.legend(loc='center left', bbox_to_anchor=(1, 0.5), frameon=False, prop={'family':'Arial',"size":12, 'weight':'bold'})
+labels = [item.get_text() for item in ax4.get_xticklabels()]
+labels = ['J','F','M','A','M','J','J','A','S','O','N','D']
+ax4.set_xticklabels(labels,fontname='Arial', fontsize=13)
+for tick in ax4.get_yticklabels():
+  tick.set_fontname('Arial')
+  tick.set_fontsize(13)
+plt.savefig("./Figure3.png", bbox_inches = "tight", dpi = 500)                         
+plt.close()
 
-# ----------------------------------------------------------------------
-# PART 6) A script to plot the monthly anomalies of ice extent from the |
-#         observational and model mean in the Arctic and Antarctic      |
-# ----------------------------------------------------------------------
+# -------------------------------------------------------------------------
+# PART 6) A script to plot the monthly anomalies of ice extent from the    |
+#         observational and model mean in the Arctic and Antarctic (Fig. 4)|
+# -------------------------------------------------------------------------
 #Anomalies & Trend
 #Multi-model mean vs observations
 NHextent3=(NHextent1+NHextent2)/2
@@ -316,7 +385,7 @@ SHano1 = np.array([SHextent3[j] - SHcycle1[j%12] for j in range(len(SHextent3))]
 MNHextent=np.zeros((14,336))
 MSHextent=np.zeros((14,336))
 for num in range(14):
-  a=np.load(name[num])
+  a=np.load(path + name[num])
   NHconcentration=a['arr_2']/100
   NHextent=compute_extent(NHconcentration, NHcellarea, threshold = 0.15, mask = 1)
   MNHextent[num,:] = NHextent
@@ -338,17 +407,21 @@ MSHano2 = np.array([MSHextent2[j] - MSHcycle2[j%12] for j in range(len(MSHextent
 
 fig,((ax1, ax2), (ax3,ax4)) = plt.subplots(2,2, figsize=(12,6))
 years = np.arange(1980, 2008, 1.0/12)
-parameter1 = np.polyfit(years, NHano1, 1)#1 linear function
+parameter1 = np.polyfit(years, NHano1, 1)
 f1 = np.poly1d(parameter1)
 ax1.plot(years, NHano1, color = 'black', label='OBS-NH')
 ax1.plot(years, f1(years), color = 'black',linestyle='--')
 parameter = np.polyfit(years, MNHano1, 1)
 f = np.poly1d(parameter)
+NHstd_ano1=np.nanstd(NHano1,axis=0)
+MNHstd_ano1=np.nanstd(MNHano1,axis=0)
 ax1.plot(years, MNHano1, color = 'tab:green')
 ax1.plot(years, f(years), color = 'tab:green',linestyle='--')
-ax1.text(2007, 2.2, '(a)', fontsize=13, fontweight = 'bold')
-ax1.text(2000, 2.2, 'OBS-NH', color ='black',fontsize=13, fontweight = 'bold')
-ax1.text(2000, 1.5, 'OMIP1-NH',color ='tab:green',fontsize=13, fontweight = 'bold')
+ax1.text(2007, 2.5, '(a)', fontsize=13, fontweight = 'bold')
+ax1.text(1980, -2.0, 'OBS-NH', color ='black',fontsize=11, fontweight = 'bold') 
+ax1.text(1987, -2.0, 'Std.:0.54 Trend: -0.53', color ='black',fontsize=11, fontweight = 'bold') 
+ax1.text(1980, -2.5, 'OMIP1-NH',color ='tab:green',fontsize=11, fontweight = 'bold')
+ax1.text(1987, -2.5, 'Std.:0.61 Trend: -0.47',color ='tab:green',fontsize=11, fontweight = 'bold')
 tick_spacing = 1
 ax1.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
 ax1.set_xticklabels(['','','1980','','','','','1985','','','','','1990','','','','','1995','','','','','2000','','','','','2005'])
@@ -357,15 +430,21 @@ ax1.grid(linestyle=':')
 ax1.tick_params(labelsize=13, direction='in')
 ax1.set_ylabel('$\mathregular{10^6}$ $\mathregular{km^2}$', fontsize=13, fontweight = 'bold')
 
+years = np.arange(1980, 2008, 1.0/12)
+parameter1 = np.polyfit(years, NHano1, 1)
+f1 = np.poly1d(parameter1)
 ax2.plot(years, NHano1, color = 'black', label='OBS-NH')
 ax2.plot(years, f1(years), color = 'black',linestyle='--')
 parameter = np.polyfit(years, MNHano2, 1)
 f = np.poly1d(parameter)
+NHstd_ano1=np.nanstd(NHano1,axis=0)
+MNHstd_ano2=np.nanstd(MNHano2,axis=0)
 ax2.plot(years, MNHano2, color = 'tab:orange')
 ax2.plot(years, f(years), color = 'tab:orange',linestyle='--')
-ax2.text(2007, 2.2, '(b)', fontsize=13, fontweight = 'bold')
-ax2.text(2000, 2.2, 'OBS-NH', color ='black',fontsize=13, fontweight = 'bold') 
-ax2.text(2000, 1.5, 'OMIP2-NH',color ='tab:orange',fontsize=13, fontweight = 'bold')
+ax2.text(2007, 2.5, '(b)', fontsize=13, fontweight = 'bold')
+ax2.text(1980, -2.0, 'OBS-NH', color ='black',fontsize=11, fontweight = 'bold') 
+ax2.text(1980, -2.5, 'OMIP2-NH',color ='tab:orange',fontsize=11, fontweight = 'bold')
+ax2.text(1987, -2.5, 'Std.:0.49 Trend: -0.42',color ='tab:orange',fontsize=11, fontweight = 'bold')
 tick_spacing = 1
 ax2.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
 ax2.set_xticklabels(['','','1980','','','','','1985','','','','','1990','','','','','1995','','','','','2000','','','','','2005'])
@@ -374,17 +453,21 @@ ax2.grid(linestyle=':')
 ax2.tick_params(labelsize=13, direction='in')
 ax2.set_ylabel('$\mathregular{10^6}$ $\mathregular{km^2}$', fontsize=13, fontweight = 'bold')
 #SH
-parameter1 = np.polyfit(years, SHano1, 1)#1 linear function
+parameter1 = np.polyfit(years, SHano1, 1)
 f1 = np.poly1d(parameter1)
 ax3.plot(years, SHano1, color = 'black', label='OBS-SH')
 ax3.plot(years, f1(years), color = 'black',linestyle='--')
 parameter = np.polyfit(years, MSHano1, 1)
 f = np.poly1d(parameter)
+SHstd_ano1=np.nanstd(SHano1,axis=0)
+MSHstd_ano1=np.nanstd(MSHano1,axis=0)
 ax3.plot(years, MSHano1, color = 'tab:green')
 ax3.plot(years, f(years), color = 'tab:green',linestyle='--')
-ax3.text(2007, 2.2, '(c)', fontsize=13, fontweight = 'bold')
-ax3.text(2000, 2.2, 'OBS-SH', color ='black',fontsize=13, fontweight = 'bold') #fontname = 'Arial'
-ax3.text(2000, 1.5, 'OMIP1-SH',color ='tab:green',fontsize=13, fontweight = 'bold')
+ax3.text(2007, 2.5, '(c)', fontsize=13, fontweight = 'bold')
+ax3.text(1980, -2.0, 'OBS-SH', color ='black',fontsize=11, fontweight = 'bold') 
+ax3.text(1987, -2.0, 'Std.:0.44 Trend: 0.15', color ='black',fontsize=11, fontweight = 'bold') 
+ax3.text(1980, -2.5, 'OMIP1-SH',color ='tab:green',fontsize=11, fontweight = 'bold')
+ax3.text(1987, -2.5, 'Std.:0.52 Trend: 0.01',color ='tab:green',fontsize=11, fontweight = 'bold')
 tick_spacing = 1
 ax3.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
 ax3.set_xticklabels(['','','1980','','','','','1985','','','','','1990','','','','','1995','','','','','2000','','','','','2005'])
@@ -394,15 +477,21 @@ ax3.tick_params(labelsize=13, direction='in')
 ax3.set_ylabel('$\mathregular{10^6}$ $\mathregular{km^2}$', fontsize=13, fontweight = 'bold')
 ax3.set_xlabel('year', fontsize=13, fontweight = 'bold')
 
+years = np.arange(1980, 2008, 1.0/12)
+parameter1 = np.polyfit(years, SHano1, 1)
+f1 = np.poly1d(parameter1)
 ax4.plot(years, SHano1, color = 'black', label='OBS-SH')
 ax4.plot(years, f1(years), color = 'black',linestyle='--')
 parameter = np.polyfit(years, MSHano2, 1)
 f = np.poly1d(parameter)
+SHstd_ano1=np.nanstd(SHano1,axis=0)
+MSHstd_ano2=np.nanstd(MSHano2,axis=0)
 ax4.plot(years, MSHano2, color = 'tab:orange')
 ax4.plot(years, f(years), color = 'tab:orange',linestyle='--')
-ax4.text(2007, 2.2, '(d)', fontsize=13, fontweight = 'bold')
-ax4.text(2000, 2.2, 'OBS-SH', color ='black',fontsize=13, fontweight = 'bold') #fontname = 'Arial'
-ax4.text(2000, 1.5, 'OMIP2-SH',color ='tab:orange',fontsize=13, fontweight = 'bold')
+ax4.text(2007, 2.5, '(d)', fontsize=13, fontweight = 'bold')
+ax4.text(1980, -2.0, 'OBS-SH', color ='black',fontsize=11, fontweight = 'bold') 
+ax4.text(1980, -2.5, 'OMIP2-SH',color ='tab:orange',fontsize=11, fontweight = 'bold')
+ax4.text(1987, -2.5, 'Std.:0.38 Trend: 0.02',color ='tab:orange',fontsize=11, fontweight = 'bold')
 tick_spacing = 1
 ax4.xaxis.set_major_locator(ticker.MultipleLocator(tick_spacing))
 ax4.set_xticklabels(['','','1980','','','','','1985','','','','','1990','','','','','1995','','','','','2000','','','','','2005'])
@@ -411,7 +500,7 @@ ax4.grid(linestyle=':')
 ax4.tick_params(labelsize=13, direction='in')
 ax4.set_ylabel('$\mathregular{10^6}$ $\mathregular{km^2}$', fontsize=13, fontweight = 'bold')
 ax4.set_xlabel('year', fontsize=13, fontweight = 'bold')
-plt.savefig("./Fig4.png", dpi = 500, bbox_inches = "tight")
+plt.savefig("./Figure4.png", dpi = 500, bbox_inches = "tight")
 plt.close()
 
 # ---------------------------------------------------------
@@ -491,11 +580,11 @@ for obs in range(2):
   Metrics_siext[16,:]=(Metrics_siext[2,:]+Metrics_siext[4,:]+Metrics_siext[9,:]+Metrics_siext[11,:]+Metrics_siext[13,:])/5#OMIP2 mean
   np.savez('siext_metrics_'+str(i)+'.npz', Metrics_siext, NHerror_mean1, SHerror_mean1, NH_error_std1, SH_error_std1, NH_error_trend1, SH_error_trend1)
 
-# -------------------------------------------------------
-# PART 8) A script plots the ice extent metrics (heatmap)|
-# -------------------------------------------------------
-Models=['CMCC-CM2-HR4/2','CMCC-CM2-SR5/1','CMCC-CM2-SR5/2','EC-Earth3/1','EC-Earth3/2','GFDL-CM4/1','GFDL-OM4p5B/1','IPSL-CM6A-LR/1','MIROC6/1','MIROC6/2','MRI-ESM2-0/1','MRI-ESM2-0/2','NorESM2-LM/1','NorESM2-LM/2','Model mean','Model mean/1','Model mean/2']
-Variables=['Mean Ext. North','Std Ano Ext. North','Trend Ano Ext. North','Mean Ext. South','Std Ano Ext. South','Trend Ano Ext. South']
+# ----------------------------------------------------------
+# PART 8) A script plots the ice extent metrics (Figs. 5a,b)|
+# ----------------------------------------------------------
+Models=['CMCC-CM2-HR4/J','CMCC-CM2-SR5/C','CMCC-CM2-SR5/J','EC-Earth3/C','EC-Earth3/J','GFDL-CM4/C','GFDL-OM4p5B/C','IPSL-CM6A-LR/C','MIROC6/C','MIROC6/J','MRI-ESM2-0/C','MRI-ESM2-0/J','NorESM2-LM/C','NorESM2-LM/J','Model mean','Model mean/C','Model mean/J']
+Variables=['Mean Ext. NH','Std Ano Ext. NH','Trend Ano Ext. NH','Mean Ext. SH','Std Ano Ext. SH','Trend Ano Ext. SH']
 for obs in range(2):
   if obs==0:#NSIDC-0051
     a=np.load('siext_metrics_NSIDC0051.npz')
@@ -512,7 +601,7 @@ for obs in range(2):
   im,cbar = heatmap(values, Models,Variables, ax=ax1, cmap="OrRd", vmin=0, vmax=50) 
   texts = annotate_heatmap(im, valfmt="{x:.1f}",size=14.5,threshold=40)      
   cbar.remove()
-  ax1.set_xticklabels(['Mean Ext. North','Std Ano Ext. North','Trend Ano Ext. North','Mean Ext. South','Std Ano Ext. South','Trend Ano Ext. South'])#,fontname='Arial', fontsize=12)
+  ax1.set_xticklabels(['Mean Ext. NH','Std Ano Ext. NH','Trend Ano Ext. NH','Mean Ext. SH','Std Ano Ext. SH','Trend Ano Ext. SH'])#,fontname='Arial', fontsize=12)
   plt.setp(ax1.get_xticklabels(), fontname='Arial', fontsize=16)
   plt.setp(ax1.get_yticklabels(), fontname='Arial', fontsize=16)
   cax = fig.add_axes([0.75, 0.113, 0.01, 0.765])
@@ -520,10 +609,10 @@ for obs in range(2):
   cbar.ax.yaxis.set_ticks_position('both')
   cbar.ax.tick_params(direction='in', length=2,labelsize=16)
   if obs==0:#NSIDC-0051
-    ax1.set_title("(a) Models vs NSIDC-0051", fontname='Arial', fontsize=16)
-    plt.savefig('./Fig6a_Metrics_siext_NSIDC0051.png', bbox_inches = "tight", dpi = 500)
+    ax1.set_title("(a) Extent: models vs. NSIDC-0051", fontname='Arial', fontsize=16)
+    plt.savefig('./Figure5a.png', bbox_inches = "tight", dpi = 500)
   else:#OSI450
-    ax1.set_title("(b) Models vs OSI-450", fontname='Arial', fontsize=16)
-    plt.savefig('./Fig6b_Metrics_siext_OSI450.png', bbox_inches = "tight", dpi = 500)
+    ax1.set_title("(b) Extent: models vs OSI-450", fontname='Arial', fontsize=16)
+    plt.savefig('./Figure5b.png', bbox_inches = "tight", dpi = 500)
 
 
