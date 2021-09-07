@@ -10,7 +10,8 @@
 #    by following https://matplotlib.org/stable/gallery/images_contours_and_fields/image_annotated_heatmap.html)
 # 5) A script deals with the input NetCDF data, and then calls the function 1) 
 # 6) A script calls the function 2) and then computes the snow depth metrics
-# 7) A script calls the functions 3) and 4) to plot the snow depth metrics
+# 7) A script calls the functions 3) and 4) to plot the snow depth metrics（Fig. 7b）
+# 8) A script plots the February (Arctic) and September (Antarctic) mean snow depth differences (Figs. A7-A8);
 
 # ------------------------------------
 # PART 1) The interpolation function  |
@@ -475,11 +476,11 @@ Metrics_sithick[15,:]=(Metrics_sithick[1,:]+Metrics_sithick[3,:]+Metrics_sithick
 Metrics_sithick[16,:]=(Metrics_sithick[2,:]+Metrics_sithick[4,:]+Metrics_sithick[9,:]+Metrics_sithick[11,:]+Metrics_sithick[13,:])/5#OMIP2 mean
 np.savez('metric_sisnthick_SnowModelLG.npz', Metrics_sithick, NHerror_mean1, SHerror_mean1) 
 
-# --------------------------------------------------------
-# PART 7) A script plots the snow depth metrics (heatmap) | 
-# --------------------------------------------------------
-Models=['CMCC-CM2-HR4/2','CMCC-CM2-SR5/1','CMCC-CM2-SR5/2','EC-Earth3/1','EC-Earth3/2','GFDL-CM4/1','GFDL-OM4p5B/1','IPSL-CM6A-LR/1','MIROC6/1','MIROC6/2','MRI-ESM2-0/1','MRI-ESM2-0/2','NorESM2-LM/1','NorESM2-LM/2','Model mean','Model mean/1','Model mean/2']
-Variables=['Mean Snow Depth North','Mean Snow Depth South','Mean Snow Depth North']
+# ---------------------------------------------------------
+# PART 7) A script plots the snow depth metrics (Figs. 7b) | 
+# ---------------------------------------------------------
+Models=['CMCC-CM2-HR4/J','CMCC-CM2-SR5/C','CMCC-CM2-SR5/J','EC-Earth3/C','EC-Earth3/J','GFDL-CM4/C','GFDL-OM4p5B/C','IPSL-CM6A-LR/C','MIROC6/C','MIROC6/J','MRI-ESM2-0/C','MRI-ESM2-0/J','NorESM2-LM/C','NorESM2-LM/J','Model mean','Model mean/C','Model mean/J']
+Variables=['Mean Snow Depth NH','Mean Snow Depth SH','Mean Snow Depth NH']
 #Envisat&SnowModelLG
 values=np.zeros((17, 3))
 a=np.load('metric_sisnthick_EnviSat.npz')
@@ -494,12 +495,168 @@ fig,ax1 = plt.subplots(1, figsize=(figwidth, figheight), dpi=dpi)
 im,cbar = heatmap(values, Models,Variables, ax=ax1, cmap="OrRd", vmin=0, vmax=3) 
 texts = annotate_heatmap(im, valfmt="{x:.2f}",size=16,threshold=2)
 cbar.remove()
-ax1.set_xticklabels(['Mean Snow Depth North','Mean Snow Depth South','Mean Snow Depth North'])
+ax1.set_xticklabels(['Mean Snow Depth NH','Mean Snow Depth SH','Mean Snow Depth NH'])
 plt.setp(ax1.get_xticklabels(), fontname='Arial', fontsize=16)
 plt.setp(ax1.get_yticklabels(), fontname='Arial', fontsize=16)
 cax = fig.add_axes([0.75, 0.113, 0.01, 0.765])
 cbar = fig.colorbar(im, cax=cax,ticks=[0.5,0.7,0.9,1.1,1.3], orientation="vertical")
 cbar.ax.yaxis.set_ticks_position('both')
 cbar.ax.tick_params(direction='in',length=2,labelsize=16)
-ax1.set_title("(b) Models vs Envisat and SnowModel-LG", fontname='Arial', fontsize=16)
-plt.savefig('./7b_Metrics_sisnthick_Envisat_SnowModelLG.png', bbox_inches = "tight", dpi = 500)
+ax1.set_title("(b) Snow depth: models vs. Envisat & SnowModel-LG", fontname='Arial', fontsize=16)
+plt.savefig('./Figure7b.png', bbox_inches = "tight", dpi = 500)
+
+# ----------------------------------------------------------------------------------------------------------------
+# PART 8) A script plots the February (Arctic) and September (Antarctic) mean snow depth differences (Figs. A7-A8)|
+# ----------------------------------------------------------------------------------------------------------------
+# 2003-2007 Envisat: Arctic:1-4,11,12 February  Antarctic: 5-10 Sept. 
+# ICESat: 13 measurement campaigns for the Arctic and 11 for the Antarctic, 
+#         limited to February-March, March-April, May-June, October-November with each roughly 33 days. 
+# Prepare the data
+a=np.load('Envisat_2003_2007_sisnthick.npz')
+NHlat_curv=a['arr_0']
+NHlon_curv=a['arr_1']
+NHthick=a['arr_2']
+NHthick_unc=a['arr_3']
+SHlat_curv=a['arr_4']
+SHlon_curv=a['arr_5']
+SHthick=a['arr_6']
+SHthick_unc=a['arr_7']
+#Here we conpute the mean monthly concentrations over the whole period
+NHthick1 = np.array([np.nanmean(NHthick[m::6,:,:], axis=0) for m in range(6)])
+SHthick1 = np.array([np.nanmean(SHthick[m::6,:,:], axis=0) for m in range(6)])
+NHthick_unc1 = np.array([np.nanmean(NHthick_unc[m::6,:,:], axis=0) for m in range(6)])
+SHthick_unc1 = np.array([np.nanmean(SHthick_unc[m::6,:,:], axis=0) for m in range(6)])
+
+# Define a figure properties
+varin='sisnthick'
+units='m'
+
+name=['Envisat','CMCC-CM2-SR5/C','CMCC-CM2-SR5/J','CMCC-CM2-HR4/J','EC-Earth3/C','EC-Earth3/J','GFDL-CM4/C','MIROC6/C','MIROC6/J','GFDL-OM4p5B/C','MRI-ESM2-0/C','MRI-ESM2-0/J','IPSL-CM6A-LR/C','NorESM2-LM/C','NorESM2-LM/J',]
+files=['Envisat_2003_2007_sisnthick.npz','CMCC-CM2-SR5_omip1_2003_2007_sisnthick.npz', 'CMCC-CM2-SR5_omip2_2003_2007_sisnthick.npz', 'CMCC-CM2-HR4_omip2_2003_2007_sisnthick.npz','EC-Earth3_omip1_r1_2003_2007_sisnthick.npz','EC-Earth3_omip2_r1_2003_2007_sisnthick.npz', 'GFDL-CM4_omip1_r1i_2003_2007_sisnthick.npz','MIROC6_omip1_r1i1p_2003_2007_sisnthick.npz', 'MIROC6_omip2_r1i1p_2003_2007_sisnthick.npz','GFDL-OM4p5B_omip1__2003_2007_sisnthick.npz', 'MRI-ESM2-0_omip1_r_2003_2007_sisnthick.npz', 'MRI-ESM2-0_omip2_r_2003_2007_sisnthick.npz', 'IPSL-CM6A-LR_omip1_2003_2007_sisnthick.npz', 'NorESM2-LM_omip1_r_2003_2007_sisnthick.npz', 'NorESM2-LM_omip2_r_2003_2007_sisnthick.npz']
+for jt in range(2):
+  if jt==0:
+    jt1=1
+    hemisphere = "n"
+    lat=NHlat_curv
+    lon=NHlon_curv
+  elif jt==1:
+    jt1=8
+    hemisphere = "s"
+    lat=SHlat_curv 
+    lon=SHlon_curv
+
+  fig=plt.figure(figsize=(5, 9))
+  gs1 = gridspec.GridSpec(5, 3)
+  gs1.update(wspace=0.04, hspace=0.06) # set the spacing between axes. 
+  for num in range(15):  
+    axes=plt.subplot(gs1[num])
+    a=np.load(path + files[num]) 
+    NHthick=a['arr_2']
+    SHthick=a['arr_5']#!!!!!
+
+    if num==0:
+      NHfield=NHthick1[1,:,:]
+      SHfield=SHthick1[4,:,:]
+    else:
+      #Here we conpute the mean monthly concentrations over the whole period
+      NHthick2 = np.array([np.nanmean(NHthick[m::12,:,:], axis=0) for m in range(12)])
+      NHfield=NHthick2[1,:,:]-NHthick1[1,:,:]   
+      SHthick2 = np.array([np.nanmean(SHthick[m::12,:,:], axis=0) for m in range(12)]) 
+      SHfield=SHthick2[8,:,:]-SHthick1[4,:,:] 
+
+    # Create the colorbar
+    # Load the colormap
+    if num==0:
+      lb=0
+      ub=0.38
+      nsteps=0.02
+      colmap ='Reds'
+      extmethod = "max"
+    else:
+      lb=-0.25001  
+      ub=0.25001
+      nsteps=0.025
+      colmap ='RdBu_r'
+      extmethod = "both"
+    clevs = np.arange(lb, ub, nsteps)
+    cmap = eval("plt.cm." + colmap)
+    # Colors for values outside the colorbar
+    # Get first and last colors of the colormap
+    first_col = cmap(0)[0:3]
+    last_col  = cmap(255)[0:3]
+    first_col1 = cmap(10)[0:3]
+    # Create "over" and "under" colors.
+    # Take respectively the latest and first color and
+    # darken them by 50%
+    col_under = [i / 2.0 for i in first_col]
+    col_over  = [i / 2.0 for i in last_col ]
+ 
+    # Create a projection 
+    # Determine if we are in the northern hemisphere or in the Southern hemisphere.
+    if hemisphere == "n":
+      boundlat = 50
+      l0 = 0.
+    elif hemisphere == "s":
+      boundlat = -50
+      l0 = 180.
+    else:
+      sys.exit("(map_polar_field) Hemisphere unkown")
+
+    # Projection name
+    projname = hemisphere + "plaea" 
+    map = Basemap(projection = projname,lat_0=90, boundinglat = boundlat, lon_0 = l0, resolution = 'l', round=True, ax=axes)
+    x, y = map(lon, lat)
+
+    # Plot the figure 
+    if hemisphere == "n":
+      field = np.squeeze(NHfield[:, :])
+    elif hemisphere == "s":
+      field = np.squeeze(SHfield[:, :])
+    # Draw coastlines, country boundaries, fill continents, meridians & parallels
+    map.drawcoastlines(linewidth = 0.15)
+    map.fillcontinents(color = 'silver', lake_color = 'white')
+    map.drawmeridians(np.arange(0, 360, 60), linewidth=0.9, latmax=80, color='silver')
+    map.drawparallels(np.arange(60, 90, 10), linewidth=0.9, labels=[True,True,True,True], color='silver',fontsize=1)
+    if hemisphere == "s":
+      map.drawparallels(np.arange(-90, -55, 10), linewidth=0.9, labels=[True,True,True,True], color='silver',fontsize=1) 
+    map.drawlsmask(ocean_color='white')
+    meridians = np.arange(0, 360, 60)
+    circle = map.drawmapboundary(linewidth=1, color='black')
+    circle.set_clip_on(False)
+    # Create a contourf object called "cs"
+    if num==0:
+      cs = map.contourf(x, y, field, clevs, cmap = cmap, vmin=lb, vmax=ub, latlon = False, extend = extmethod)
+      cs.cmap.set_under('white')
+      cax = fig.add_axes([0.93, 0.25, 0.03, 0.49])
+      cbar = fig.colorbar(cs, cax=cax,ticks=[0,0.04,0.08,0.12,0.16,0.20,0.24,0.28,0.32,0.36])
+      cbar.ax.yaxis.set_ticks_position('both')
+      cbar.ax.tick_params(direction='in',length=2)
+      cbar.set_label('Snow depth (m)' ,fontname='Arial',fontsize=8, fontweight='bold')
+      for l in cbar.ax.get_yticklabels():
+        l.set_fontproperties('Arial') 
+        l.set_fontsize(8)
+        l.set_fontweight('bold') 
+    else: 
+      norm = colors.DivergingNorm(vmin=lb, vcenter=0, vmax=ub)
+      cs = map.contourf(x, y, field, clevs, cmap = cmap, vmin=lb, vmax=ub, norm = norm, latlon = False, extend = extmethod)
+      cs.cmap.set_under(col_under)
+      cs.cmap.set_over(col_over)
+    axes.set_title(name[num],fontname = 'Arial', fontsize = 7.5,fontweight = 'bold', loc = 'center',y = 1.0, pad = 3)
+    
+  cax = fig.add_axes([1.05, 0.25, 0.03, 0.49])
+  cbar = fig.colorbar(cs, cax=cax,ticks=[-0.2,-0.1,0,0.1,0.2])
+  cbar.ax.yaxis.set_ticks_position('both')
+  cbar.ax.tick_params(direction='in',length=2)
+  cbar.set_label('Snow depth difference (vs. Envisat, m)' ,fontname = 'Arial',fontsize = 8, fontweight = 'bold')
+  for l in cbar.ax.get_yticklabels():
+    l.set_fontproperties('Arial') 
+    l.set_fontsize(8) 
+    l.set_fontweight('bold')
+
+  # Save figure 
+  filename    = 'FigureA' + str(jt + 7).zfill(1) 
+  imageformat = "png"  
+  dpi         = 500     
+  plt.savefig(filename + "." + imageformat, bbox_inches = "tight", dpi = dpi)
+  print('Figure ' + filename + "." + imageformat + " printed")
+  plt.close("fig")
