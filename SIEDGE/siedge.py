@@ -8,10 +8,10 @@
 # 3) The annotate heatmap function (The heatmap and annotate heatmap functions were written 
 #    by following https://matplotlib.org/stable/gallery/images_contours_and_fields/image_annotated_heatmap.html)
 # 4) A script calls the function 1) to calculate the IIEE from ice concentration,
-#    and plots the mean seasonal cycle of IIEE in the Arctic and Antarctic
+#    and plots the mean seasonal cycle of IIEE in the Arctic and Antarctic (Fig. 6)
 # 5) A script calls the function 1) to calculate the IIEE from ice concentration
 #    and to compute the ice edge location metrics
-# 6) A script calls the functions 2) and 3) to plot the ice edge metrics
+# 6) A script calls the functions 2) and 3) to plot the ice edge metrics (Fig. 5c)
 
 # ---------------------------------------------------------
 # PART 1) The Intergrated Ice Edge Error (IIEE) function  |   
@@ -176,88 +176,145 @@ NHIIEE=NHtyerror[0]
 SHIIEE=NHtyerror[0]
 NHcycle1 = np.array([np.nanmean(NHIIEE[m::12]) for m in range(12)])
 SHcycle1 = np.array([np.nanmean(SHIIEE[m::12]) for m in range(12)])
+
 name=['CMCC-CM2-HR4_omip2_1980_2007_siconc.npz', 'CMCC-CM2-SR5_omip1_1980_2007_siconc.npz', 'CMCC-CM2-SR5_omip2_1980_2007_siconc.npz', 'EC-Earth3_omip1_r1_1980_2007_siconc.npz','EC-Earth3_omip2_r1_1980_2007_siconc.npz', 'GFDL-CM4_omip1_r1i_1980_2007_siconc.npz', 'GFDL-OM4p5B_omip1__1980_2007_siconc.npz', 'IPSL-CM6A-LR_omip1_1980_2007_siconc.npz',  'MIROC6_omip1_r1i1p_1980_2007_siconc.npz', 'MIROC6_omip2_r1i1p_1980_2007_siconc.npz', 'MRI-ESM2-0_omip1_r_1980_2007_siconc.npz', 'MRI-ESM2-0_omip2_r_1980_2007_siconc.npz', 'NorESM2-LM_omip1_r_1980_2007_siconc.npz', 'NorESM2-LM_omip2_r_1980_2007_siconc.npz']
-name1=['CMCC-CM2-HR4/2','CMCC-CM2-SR5/1','CMCC-CM2-SR5/2','EC-Earth3/1','EC-Earth3/2','GFDL-CM4/1','GFDL-OM4p5B/1','IPSL-CM6A-LR/1','MIROC6/1','MIROC6/2','MRI-ESM2-0/1','MRI-ESM2-0/2','NorESM2-LM/1','NorESM2-LM/2']
-#Arctic&Antarctic Figs.5a&b
-for hems in range(2):
-  if hems==0:
-    i='aArctic'
-    cycle1=NHcycle1
+name1=['CMCC-CM2-HR4/J','CMCC-CM2-SR5/C','CMCC-CM2-SR5/J','EC-Earth3/C','EC-Earth3/J','GFDL-CM4/C','GFDL-OM4p5B/C','IPSL-CM6A-LR/C','MIROC6/C','MIROC6/J','MRI-ESM2-0/C','MRI-ESM2-0/J','NorESM2-LM/C','NorESM2-LM/J']
+#'NSIDC-0051',
+months = np.arange(1,13)
+MNHIIEE1=np.zeros((14,12))
+MSHIIEE1=np.zeros((14,12))
+for num in range(14):
+  print(num)
+  a=np.load(name[num])
+  NHconcentration=a['arr_2']/100
+  SHconcentration=a['arr_5']/100
+  NHedge=compute_siedge_metrics(NHconcentration, NHconcentration1, NHcellarea)
+  SHedge=compute_siedge_metrics(SHconcentration, SHconcentration1, SHcellarea)
+  NHIIEE = NHedge[0]
+  SHIIEE = SHedge[0]
+  MNHIIEE = np.array([np.nanmean(NHIIEE[m::12]) for m in range(12)])
+  MSHIIEE = np.array([np.nanmean(SHIIEE[m::12]) for m in range(12)])
+  MNHIIEE1[num,:] = MNHIIEE
+  MSHIIEE1[num,:] = MSHIIEE
+
+fig,((ax1, ax2), (ax3,ax4)) = plt.subplots(2,2, figsize=(12,9))
+ax1.grid(linestyle=':', zorder=1)
+months = np.arange(1,13)
+MIIEE10= np.nanmean(MNHIIEE1,axis=1)
+MIIEE11 = (MNHIIEE1[1,:]+MNHIIEE1[3,:]+MNHIIEE1[8,:]+MNHIIEE1[10,:]+MNHIIEE1[12,:])/5
+MIIEE12 = (MNHIIEE1[2,:]+MNHIIEE1[4,:]+MNHIIEE1[9,:]+MNHIIEE1[11,:]+MNHIIEE1[13,:])/5
+ax1.plot(months, MIIEE10, color = 'firebrick', label='Model mean',linewidth=2, zorder=20)
+ax1.plot(months, MIIEE11, color = 'red', label='Model mean/C',linewidth=2, zorder=20)
+ax1.plot(months, MIIEE12, color = 'red', label='Model mean/J',linewidth=2,linestyle='-.', zorder=20)
+ax1.scatter(months, NHcycle1, color = 'c', label='OSI-450', marker='+', s=28, zorder=30)
+ax1.set_ylabel('Arctic IIEE (vs. NSIDC-0051, $\mathregular{10^6}$ $\mathregular{km^2}$)', fontsize=11, fontweight = 'bold')
+xticks=ax1.set_xticks(np.arange(1,13,1))
+yticks=ax1.set_yticks(np.arange(0,5,1)) 
+ax1.text(11, 3.6, '(a)', fontsize=13, fontweight = 'bold')
+labels = [item.get_text() for item in ax1.get_xticklabels()]
+labels = ['J','F','M','A','M','J','J','A','S','O','N','D']
+ax1.set_xticklabels(labels,fontname='Arial', fontsize=13)
+for tick in ax1.get_yticklabels():
+  tick.set_fontname('Arial')
+  tick.set_fontsize(13)
+
+ax2.grid(linestyle=':', zorder=1)
+months = np.arange(1,13)
+MIIEE10= np.nanmean(MSHIIEE1,axis=1)
+MIIEE11 = (MSHIIEE1[1,:]+MSHIIEE1[3,:]+MSHIIEE1[8,:]+MSHIIEE1[10,:]+MSHIIEE1[12,:])/5
+MIIEE12 = (MSHIIEE1[2,:]+MSHIIEE1[4,:]+MSHIIEE1[9,:]+MSHIIEE1[11,:]+MSHIIEE1[13,:])/5
+ax2.plot(months, MIIEE10, color = 'firebrick', label='Model mean',linewidth=2, zorder=20)
+ax2.plot(months, MIIEE11, color = 'red', label='Model mean/C',linewidth=2, zorder=20)
+ax2.plot(months, MIIEE12, color = 'red', label='Model mean/J',linewidth=2,linestyle='-.', zorder=20)
+ax2.scatter(months, SHcycle1, color = 'c', label='OSI-450', marker='+', s=28, zorder=30)
+ax2.set_ylabel('Antarctic IIEE (vs. NSIDC-0051, $\mathregular{10^6}$ $\mathregular{km^2}$)', fontsize=11, fontweight = 'bold')
+ax2.set_xticks(np.arange(1,13,1))
+ax2.set_yticks(np.arange(0,7,1))
+ax2.text(11, 5.5, '(b)', fontsize=13, fontweight = 'bold')
+ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5), frameon=False,prop={'family':'Arial', "size":12, 'weight':'bold'})#'center left'
+labels = [item.get_text() for item in ax2.get_xticklabels()]
+labels = ['J','F','M','A','M','J','J','A','S','O','N','D']
+ax2.set_xticklabels(labels,fontname='Arial', fontsize=13)
+for tick in ax2.get_yticklabels():
+  tick.set_fontname('Arial')
+  tick.set_fontsize(13)
+
+ax3.grid(linestyle=':', zorder=1)
+months = np.arange(1,13)
+for num in range(14):
+  if (num==2):
+    ax3.plot(months, MNHIIEE1[num,:], color = colors[num+2], label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10) 
+  elif (num==3):
+    ax3.plot(months, MNHIIEE1[num,:], color = 'darkgreen', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==4):
+    ax3.plot(months, MNHIIEE1[num,:], color = 'darkgreen', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10) 
+  elif (num==8):
+    ax3.plot(months, MNHIIEE1[num,:], color = 'darkorange', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==9):
+    ax3.plot(months, MNHIIEE1[num,:], color = 'darkorange', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10) 
+  elif (num==10):
+    ax3.plot(months, MNHIIEE1[num,:], color = 'tab:grey', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==11):
+    ax3.plot(months, MNHIIEE1[num,:], color = 'tab:grey', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10) 
+  elif (num==12):
+    ax3.plot(months, MNHIIEE1[num,:], color = 'gold', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==13):
+    ax3.plot(months, MNHIIEE1[num,:], color = 'gold', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10) 
+  elif (num==5):
+    ax3.plot(months, MNHIIEE1[num,:], color = 'blue', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
   else:
-    i='bAntarctic'
-    cycle1=SHcycle1
+    ax3.plot(months, MNHIIEE1[num,:], color = colors[num+3], label=name1[num],linewidth=2,alpha=0.8, zorder=10)  
+ax3.set_xlabel('Month', fontsize=12, fontweight = 'bold')
+ax3.set_ylabel('Arctic IIEE (vs. NSIDC-0051, $\mathregular{10^6}$ $\mathregular{km^2}$)', fontsize=11, fontweight = 'bold')
+xticks=ax3.set_xticks(np.arange(1,13,1))
+yticks=ax3.set_yticks(np.arange(0,6,1)) 
+ax3.text(11, 5.1, '(c)', fontsize=13, fontweight = 'bold')
+labels = [item.get_text() for item in ax3.get_xticklabels()]
+labels = ['J','F','M','A','M','J','J','A','S','O','N','D']
+ax3.set_xticklabels(labels,fontname='Arial', fontsize=13)
+for tick in ax3.get_yticklabels():
+  tick.set_fontname('Arial')
+  tick.set_fontsize(13)
 
-  fig=plt.figure(1)
-  plt.grid(linestyle=':', zorder=1)
-  months = np.arange(1,13)
-  MIIEE1=np.zeros((14,12))
-  
-  for num in range(14):
-    a=np.load(name[num])
-    if hems==0:
-      concentration=a['arr_2']/100
-      edge = compute_siedge_metrics(concentration, NHconcentration1, NHcellarea)
-      IIEE = edge[0]
-    else:
-      concentration=a['arr_5']/100
-      edge = compute_siedge_metrics(concentration, SHconcentration1, SHcellarea)
-      IIEE = edge[0]
-    MIIEE = np.array([np.nanmean(IIEE[m::12]) for m in range(12)])
-    MIIEE1[num,:] = MIIEE
-    if (num==2):
-      plt.plot(months, MIIEE, color = colors[num+2], label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
-    elif (num==3):
-      plt.plot(months, MIIEE, color = 'darkgreen', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
-    elif (num==4):
-      plt.plot(months, MIIEE, color = 'darkgreen', label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
-    elif (num==8):
-      plt.plot(months, MIIEE, color = 'darkorange', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
-    elif (num==9):
-      plt.plot(months, MIIEE, color = 'darkorange', label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
-    elif (num==10):
-      plt.plot(months, MIIEE, color = 'tab:grey', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
-    elif (num==11):
-      plt.plot(months, MIIEE, color = 'tab:grey', label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
-    elif (num==12):
-      plt.plot(months, MIIEE, color = 'gold', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
-    elif (num==13):
-      plt.plot(months, MIIEE, color = 'gold', label=name1[num],linewidth=0.8,linestyle='-.',alpha=0.8, zorder=10) 
-    elif (num==5):
-      plt.plot(months, MIIEE, color = 'blue', label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
-    else:
-      plt.plot(months, MIIEE, color = colors[num+3], label=name1[num],linewidth=0.8,alpha=0.8, zorder=10)
-
-  MIIEE10= np.nanmean(MIIEE1,axis=0)
-  MIIEE11 = (MIIEE1[1,:]+MIIEE1[3,:]+MIIEE1[8,:]+MIIEE1[10,:]+MIIEE1[12,:])/5
-  MIIEE12 = (MIIEE1[2,:]+MIIEE1[4,:]+MIIEE1[9,:]+MIIEE1[11,:]+MIIEE1[13,:])/5
-  plt.plot(months, MIIEE10, color = 'firebrick', label='Model mean',linewidth=0.8, zorder=20)
-  plt.plot(months, MIIEE11, color = 'red', label='Model mean/1',linewidth=2, zorder=20)
-  plt.plot(months, MIIEE12, color = 'red', label='Model mean/2',linewidth=2,linestyle='-.', zorder=20)
-  plt.scatter(months, cycle1, color = 'c', label='OSI-450', marker='+', s=28, zorder=30)
-
-  plt.xlabel('Month',fontname='Arial', fontsize=13)
-  plt.legend(prop={'family':'Arial', "size":12})  
-  ax = fig.gca()
-  xticks=ax.set_xticks(np.arange(1,13,1))
-  if hems==0:
-    plt.ylabel('Arctic intergrated ice-edge error ($\mathregular{10^6}$ $\mathregular{km^2}$)',fontname='Arial', fontsize=12.5)
-    yticks=ax.set_yticks(np.arange(0,6,1)) 
-    ax.text(11, 5.1, '(a)', fontsize=13, fontweight = 'bold')
+ax4.grid(linestyle=':', zorder=1)#, linewidth=2)
+months = np.arange(1,13)
+for num in range(14):
+  if (num==2):
+    ax4.plot(months, MSHIIEE1[num,:], color = colors[num+2], label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10) 
+  elif (num==3):
+    ax4.plot(months, MSHIIEE1[num,:], color = 'darkgreen', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==4):
+    ax4.plot(months, MSHIIEE1[num,:], color = 'darkgreen', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10) 
+  elif (num==8):
+    ax4.plot(months, MSHIIEE1[num,:], color = 'darkorange', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==9):
+    ax4.plot(months, MSHIIEE1[num,:], color = 'darkorange', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10) 
+  elif (num==10):
+    ax4.plot(months, MSHIIEE1[num,:], color = 'tab:grey', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==11):
+    ax4.plot(months, MSHIIEE1[num,:], color = 'tab:grey', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10)
+  elif (num==12):
+    ax4.plot(months, MSHIIEE1[num,:], color = 'gold', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+  elif (num==13):
+    ax4.plot(months, MSHIIEE1[num,:], color = 'gold', label=name1[num],linewidth=2,linestyle='-.',alpha=0.8, zorder=10)
+  elif (num==5):
+    ax4.plot(months, MSHIIEE1[num,:], color = 'blue', label=name1[num],linewidth=2,alpha=0.8, zorder=10)
   else:
-    plt.ylabel('Antarctic intergrated ice-edge error ($\mathregular{10^6}$ $\mathregular{km^2}$)',fontname='Arial', fontsize=12.5)
-    yticks=ax.set_yticks(np.arange(0,8,1))
-    ax.text(11, 7.1, '(b)', fontsize=13, fontweight = 'bold')
-  box = ax.get_position()
-  ax.set_position([box.x0, box.y0, box.width * 0.78, box.height])
-  ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), frameon=False)
-  labels = [item.get_text() for item in ax.get_xticklabels()]
-  labels = ['J','F','M','A','M','J','J','A','S','O','N','D']
-  ax.set_xticklabels(labels,fontname='Arial', fontsize=13)
-  for tick in ax.get_yticklabels():
-    tick.set_fontname('Arial')
-    tick.set_fontsize(13)
-  plt.savefig('./Fig5'+str(i)+'.png', bbox_inches = "tight", dpi = 500)
-  plt.close()
+    ax4.plot(months, MSHIIEE1[num,:], color = colors[num+3], label=name1[num],linewidth=2,alpha=0.8, zorder=10)
+ax4.set_xlabel('Month', fontsize=12, fontweight = 'bold')
+ax4.set_ylabel('Antarctic IIEE (vs. NSIDC-0051, $\mathregular{10^6}$ $\mathregular{km^2}$)', fontsize=11, fontweight = 'bold')
+ax4.set_xticks(np.arange(1,13,1))
+ax4.set_yticks(np.arange(0,8,1))
+ax4.text(11, 7.1, '(d)', fontsize=13, fontweight = 'bold')
+ax4.legend(loc='center left', bbox_to_anchor=(1, 0.5), frameon=False,prop={'family':'Arial', "size":12, 'weight':'bold'})#'center left'
+labels = [item.get_text() for item in ax4.get_xticklabels()]
+labels = ['J','F','M','A','M','J','J','A','S','O','N','D']
+ax4.set_xticklabels(labels,fontname='Arial', fontsize=13)
+for tick in ax4.get_yticklabels():
+  tick.set_fontname('Arial')
+  tick.set_fontsize(13)
+plt.savefig("./Figure6.png", bbox_inches = "tight", dpi = 500)
+plt.close()
   
 # ----------------------------------------------------------------------
 # PART 5) A script computes the ice edge location error and its metrics |
@@ -310,8 +367,8 @@ np.savez('siedge_metrics_NSIDC0051&OSI-450.npz', Metrics_siedge, NHerror_mean1, 
 # -----------------------------------------------------
 # PART 6) A script plots the ice edge metrics (heatmap)|
 # -----------------------------------------------------
-Models=['CMCC-CM2-HR4/2','CMCC-CM2-SR5/1','CMCC-CM2-SR5/2','EC-Earth3/1','EC-Earth3/2','GFDL-CM4/1','GFDL-OM4p5B/1','IPSL-CM6A-LR/1','MIROC6/1','MIROC6/2','MRI-ESM2-0/1','MRI-ESM2-0/2','NorESM2-LM/1','NorESM2-LM/2','Model mean','Model mean/1','Model mean/2']
-Variables=['Mean Edge North','Mean Edge South','Mean Edge North','Mean Edge South']
+Models=['CMCC-CM2-HR4/J','CMCC-CM2-SR5/C','CMCC-CM2-SR5/J','EC-Earth3/C','EC-Earth3/J','GFDL-CM4/C','GFDL-OM4p5B/C','IPSL-CM6A-LR/C','MIROC6/C','MIROC6/J','MRI-ESM2-0/C','MRI-ESM2-0/J','NorESM2-LM/C','NorESM2-LM/J','Model mean','Model mean/C','Model mean/J']
+Variables=['Mean Edge NH','Mean Edge SH','Mean Edge NH','Mean Edge SH']
 a=np.load('siedge_metrics_NSIDC0051&OSI-450.npz')
 values=a['arr_0']
 dpi=100
@@ -321,13 +378,12 @@ figheight = 6*squaresize/float(dpi)
 fig,ax1 = plt.subplots(1, figsize=(figwidth, figheight), dpi=dpi)
 im,cbar = heatmap(values, Models,Variables, ax=ax1, cmap="OrRd", vmin=1, vmax=6) 
 texts = annotate_heatmap(im, valfmt="{x:.2f}",size=16,threshold=4)
-cbar.remove()
-ax1.set_xticklabels(['Mean Edge North','Mean Edge South','Mean Edge North','Mean Edge South'])#,fontname='Arial', fontsize=12)
+ax1.set_xticklabels(['Mean Edge NH','Mean Edge SH','Mean Edge NH','Mean Edge SH'])#,fontname='Arial', fontsize=12)
 plt.setp(ax1.get_xticklabels(), fontname='Arial', fontsize=16)
 plt.setp(ax1.get_yticklabels(), fontname='Arial', fontsize=16)
 cax = fig.add_axes([0.75, 0.113, 0.01, 0.765])
 cbar = fig.colorbar(im, cax=cax,ticks=[1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6], orientation="vertical")
 cbar.ax.yaxis.set_ticks_position('both')
 cbar.ax.tick_params(direction='in',length=2,labelsize=16)
-ax1.set_title("(c) Models vs. NSIDC-0051 and OSI-450 ", fontname='Arial', fontsize=16)
-plt.savefig('./Fig6c_Metrics_siedge.png', bbox_inches = "tight", dpi = 500)
+ax1.set_title("(c) Edge: models vs. NSIDC-0051 & OSI-450 ", fontname='Arial', fontsize=16)
+plt.savefig('./Figure5c.png', bbox_inches = "tight", dpi = 500)
