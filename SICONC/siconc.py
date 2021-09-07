@@ -1,18 +1,19 @@
 # Author: Xia Lin
 # Date:   Feb 2021
-# Thanks to François Massonnet for the help on metrics calculation!
 # Contents:
 # 1) A function that interpolates the input ice concentration data into the NSIDC-0051 grid, 
 #    the input data is a numpy array but a NetCDF file 
 # 2) A function that computes sea ice concentration errors between two datasets
 #    on the mean state, interannual variability and trend in order to get the metrics;
-#    The input data is a numpy array but a NetCDF file 
+#    The input data is a numpy array but a NetCDF file
+#    History: Based on François Massonnet's Matlab scripts   
 # 3) The heatmap function  
 # 4) The annotate heatmap function (The heatmap and annotate heatmap functions were written 
 #    by following https://matplotlib.org/stable/gallery/images_contours_and_fields/image_annotated_heatmap.html)
 # 5) A script deals with the input NetCDF data, and then calls the function 1) 
 # 6) A script calls the function 2) and then computes the ice concentration metrics
-# 7) A script calls the functions 3) and 4) to plot the ice concentration metrics
+# 7) A script calls the functions 3) and 4) to plot the ice concentration metrics (Fig. 2)
+# 8) A script plots the February and September mean ice concentration differences in the Arctic and Antarctic (Figs. A1-A4);
 
 # ------------------------------------
 # PART 1) The interpolation function  |
@@ -442,8 +443,8 @@ NHconcentration2=a['arr_2']/100
 SHconcentration2=a['arr_5']/100
 NHtyerror=compute_siconc_metrics(NHconcentration1, NHconcentration2, NHcellarea)
 SHtyerror=compute_siconc_metrics(SHconcentration1, SHconcentration2, SHcellarea)
-name=['CMCC-CM2-HR4_omip2_1980_2007_siconc.npz', 'CMCC-CM2-SR5_omip1_1980_2007_siconc.npz', 'CMCC-CM2-SR5_omip2_1980_2007_siconc.npz', 'EC-Earth3_omip1_r1_1980_2007_siconc.npz','EC-Earth3_omip2_r1_1980_2007_siconc.npz', 'GFDL-CM4_omip1_r1i_1980_2007_siconc.npz', 'GFDL-OM4p5B_omip1__1980_2007_siconc.npz', 'IPSL-CM6A-LR_omip1_1980_2007_siconc.npz',  'MIROC6_omip1_r1i1p_1980_2007_siconc.npz', 'MIROC6_omip2_r1i1p_1980_2007_siconc.npz', 'MRI-ESM2-0_omip1_r_1980_2007_siconc.npz', 'MRI-ESM2-0_omip2_r_1980_2007_siconc.npz', 'NorESM2-LM_omip1_r_1980_2007_siconc.npz', 'NorESM2-LM_omip2_r_1980_2007_siconc.npz']
 
+name=['CMCC-CM2-HR4_omip2_1980_2007_siconc.npz', 'CMCC-CM2-SR5_omip1_1980_2007_siconc.npz', 'CMCC-CM2-SR5_omip2_1980_2007_siconc.npz', 'EC-Earth3_omip1_r1_1980_2007_siconc.npz','EC-Earth3_omip2_r1_1980_2007_siconc.npz', 'GFDL-CM4_omip1_r1i_1980_2007_siconc.npz', 'GFDL-OM4p5B_omip1__1980_2007_siconc.npz', 'IPSL-CM6A-LR_omip1_1980_2007_siconc.npz',  'MIROC6_omip1_r1i1p_1980_2007_siconc.npz', 'MIROC6_omip2_r1i1p_1980_2007_siconc.npz', 'MRI-ESM2-0_omip1_r_1980_2007_siconc.npz', 'MRI-ESM2-0_omip2_r_1980_2007_siconc.npz', 'NorESM2-LM_omip1_r_1980_2007_siconc.npz', 'NorESM2-LM_omip2_r_1980_2007_siconc.npz']
 NHerror_mean1=np.zeros(14)
 SHerror_mean1=np.zeros(14)
 NH_error_std1=np.zeros(14)
@@ -497,11 +498,11 @@ for obs in range(2):
   Metrics_siconc[16,:]=(Metrics_siconc[2,:]+Metrics_siconc[4,:]+Metrics_siconc[9,:]+Metrics_siconc[11,:]+Metrics_siconc[13,:])/5#OMIP2 mean
   np.savez('siconc_metrics_'+str(i)+'.npz', Metrics_siconc, NHerror_mean1, SHerror_mean1, NH_error_std1, SH_error_std1, NH_error_trend1, SH_error_trend1)
 
-# --------------------------------------------------------------
-# PART 7) A script plots the ice concentration metrics (heatmap)|
-# --------------------------------------------------------------
-Models=['CMCC-CM2-HR4/2','CMCC-CM2-SR5/1','CMCC-CM2-SR5/2','EC-Earth3/1','EC-Earth3/2','GFDL-CM4/1','GFDL-OM4p5B/1','IPSL-CM6A-LR/1','MIROC6/1','MIROC6/2','MRI-ESM2-0/1','MRI-ESM2-0/2','NorESM2-LM/1','NorESM2-LM/2','Model mean','Model mean/1','Model mean/2']
-Variables=['Mean Conc. North','Std Ano Conc. North','Trend Ano Conc. North','Mean Conc. South','Std Ano Conc. South','Trend Ano Conc. South']
+# -------------------------------------------------------------
+# PART 7) A script plots the ice concentration metrics (Fig. 2)|
+# -------------------------------------------------------------
+Models=['CMCC-CM2-HR4/J','CMCC-CM2-SR5/C','CMCC-CM2-SR5/J','EC-Earth3/C','EC-Earth3/J','GFDL-CM4/C','GFDL-OM4p5B/C','IPSL-CM6A-LR/C','MIROC6/C','MIROC6/J','MRI-ESM2-0/C','MRI-ESM2-0/J','NorESM2-LM/C','NorESM2-LM/J','Model mean','Model mean/C','Model mean/J']
+Variables=['Mean Conc. NH','Std Ano Conc. NH','Trend Ano Conc. NH','Mean Conc. SH','Std Ano Conc. SH','Trend Ano Conc. SH']
 for obs in range(2):
   if obs==0:#NSIDC-0051
     a=np.load('siconc_metrics_NSIDC0051.npz')
@@ -516,7 +517,7 @@ for obs in range(2):
   im,cbar = heatmap(values, Models,Variables, ax=ax1, cmap="OrRd", vmin=1, vmax=5) 
   texts = annotate_heatmap(im, valfmt="{x:.2f}",size=16,threshold=3.5)
   cbar.remove()
-  ax1.set_xticklabels(['Mean Conc. North','Std Ano Conc. North','Trend Ano Conc. North','Mean Conc. South','Std Ano Conc. South','Trend Ano Conc. South'])
+  ax1.set_xticklabels(['Mean Conc. NH','Std Ano Conc. NH','Trend Ano Conc. NH','Mean Conc. SH','Std Ano Conc. SH','Trend Ano Conc. SH'])
   plt.setp(ax1.get_xticklabels(), fontname='Arial', fontsize=16)
   plt.setp(ax1.get_yticklabels(), fontname='Arial', fontsize=16)
   cax = fig.add_axes([0.75, 0.113, 0.01, 0.765])
@@ -524,12 +525,153 @@ for obs in range(2):
   cbar.ax.yaxis.set_ticks_position('both')
   cbar.ax.tick_params(direction='in',length=2,labelsize=16)
   if obs==0:#NSIDC-0051
-    ax1.set_title("(a) Models vs NSIDC-0051", fontname='Arial', fontsize=16)
-    plt.savefig('./Fig2a_Metrics_siconc_NSIDC0051.png', bbox_inches = "tight", dpi = 500)
+    ax1.set_title("(a) Concentration: models vs. NSIDC-0051", fontname='Arial', fontsize=16)
+    plt.savefig('./Figure2a.png', bbox_inches = "tight", dpi = 500)
   else:#OSI450
-    ax1.set_title("(b) Models vs OSI-450", fontname='Arial', fontsize=16)
-    plt.savefig('./Fig2b_Metrics_siconc_OSI450.png', bbox_inches = "tight", dpi = 500)
+    ax1.set_title("(b) Concentration: models vs. OSI-450", fontname='Arial', fontsize=16)
+    plt.savefig('./Figure2b.png', bbox_inches = "tight", dpi = 500)
 
+# ----------------------------------------------------------------------------------------------------------------------
+# PART 8) A script plots the February and September mean ice concentration differences in both hemispheres (Figs. A1-A4)|
+# ----------------------------------------------------------------------------------------------------------------------
+# Prepare the data
+a=np.load('NSIDC0051_1980_2007_siconc.npz')
+NHlat_curv=a['arr_0']
+NHlon_curv=a['arr_1']
+NHconcentration1=a['arr_2']/100
+SHlat_curv=a['arr_3']
+SHlon_curv=a['arr_4']
+SHconcentration1=a['arr_5']/100
+#Here we conpute the mean monthly concentrations over the whole period
+NHconc1 = np.array([np.nanmean(NHconcentration1[m::12,:,:], axis=0) for m in range(12)])
+SHconc1 = np.array([np.nanmean(SHconcentration1[m::12,:,:], axis=0) for m in range(12)])
+idx=np.where(NHconc1 <= 0)
+NHconc1[idx]=np.nan
+idx=np.where(SHconc1 <= 0)
+SHconc1[idx]=np.nan
 
+name=['OSI-450','CMCC-CM2-SR5/C','CMCC-CM2-SR5/J','CMCC-CM2-HR4/J','EC-Earth3/C','EC-Earth3/J','GFDL-CM4/C','MIROC6/C','MIROC6/J','GFDL-OM4p5B/C','MRI-ESM2-0/C','MRI-ESM2-0/J','IPSL-CM6A-LR/C','NorESM2-LM/C','NorESM2-LM/J']#!!!!!!
+files=['OSI450_1980_2007_siconc.npz','CMCC-CM2-SR5_omip1_1980_2007_siconc.npz', 'CMCC-CM2-SR5_omip2_1980_2007_siconc.npz', 'CMCC-CM2-HR4_omip2_1980_2007_siconc.npz','EC-Earth3_omip1_r1_1980_2007_siconc.npz','EC-Earth3_omip2_r1_1980_2007_siconc.npz', 'GFDL-CM4_omip1_r1i_1980_2007_siconc.npz', 'MIROC6_omip1_r1i1p_1980_2007_siconc.npz', 'MIROC6_omip2_r1i1p_1980_2007_siconc.npz', 'GFDL-OM4p5B_omip1__1980_2007_siconc.npz', 'MRI-ESM2-0_omip1_r_1980_2007_siconc.npz', 'MRI-ESM2-0_omip2_r_1980_2007_siconc.npz', 'IPSL-CM6A-LR_omip1_1980_2007_siconc.npz', 'NorESM2-LM_omip1_r_1980_2007_siconc.npz', 'NorESM2-LM_omip2_r_1980_2007_siconc.npz']
+for jt in range(4):
+  if jt==0:
+    jt1=8
+    hemisphere = "n"
+    lat=NHlat_curv
+    lon=NHlon_curv
+  elif jt==1:
+    jt1=1
+    hemisphere = "n"
+    lat=NHlat_curv
+    lon=NHlon_curv
+  elif jt==2:
+    jt1=1
+    hemisphere = "s"
+    lat=SHlat_curv 
+    lon=SHlon_curv
+  elif jt==3:
+    jt1=8
+    hemisphere = "s"
+    lat=SHlat_curv 
+    lon=SHlon_curv
+
+  fig=plt.figure(figsize=(5, 9))
+  gs1 = gridspec.GridSpec(5, 3)
+  gs1.update(wspace=0.04, hspace=0.06) #set the spacing between axes. 
+  for num in range(15):  
+    axes=plt.subplot(gs1[num])
+    a=np.load(files[num]) 
+    NHconcentration=a['arr_2']/100
+    SHconcentration=a['arr_5']/100
+    #Here we conpute the mean monthly concentrations over the whole period
+    NHconc = np.array([np.nanmean(NHconcentration[m::12,:,:], axis=0) for m in range(12)])
+    idx=np.where(NHconc1 <= 0)
+    NHconc[idx]=np.nan
+    NHfield=NHconc-NHconc1   
+    SHconc = np.array([np.nanmean(SHconcentration[m::12,:,:], axis=0) for m in range(12)])
+    idx=np.where(SHconc1 <= 0)
+    SHconc[idx]=np.nan
+    SHfield=SHconc-SHconc1   
+
+    # Create the colorbar
+    # Load the colormap
+    lb=-0.5001  
+    ub=0.5001
+    nsteps=0.1
+    colmap ='RdBu_r'
+    extmethod = "both"
+    clevs = np.arange(lb, ub, nsteps)
+    cmap = eval("plt.cm." + colmap)
+    # Colors for values outside the colorbar
+    # Get first and last colors of the colormap
+    first_col = cmap(0)[0:3]
+    last_col  = cmap(255)[0:3]
+    first_col1 = cmap(10)[0:3]
+    # Create "over" and "under" colors.
+    # Take respectively the latest and first color and
+    # darken them by 50%
+    col_under = [i / 2.0 for i in first_col]
+    col_over  = [i / 2.0 for i in last_col ]
+
+    # Create a projection 
+    # Determine if we are in the northern hemisphere or in the Southern hemisphere.
+    if hemisphere == "n":
+      boundlat = 50
+      l0 = 0.
+    elif hemisphere == "s":
+      boundlat = -50
+      l0 = 180.
+    else:
+      sys.exit("(map_polar_field) Hemisphere unkown")
+    # Projection name
+    projname = hemisphere + "plaea" 
+    map = Basemap(projection = projname,lat_0=90, boundinglat = boundlat, lon_0 = l0, resolution = 'l', round=True, ax=axes)
+    x, y = map(lon, lat)
+    
+    # Plot the figure 
+    if hemisphere == "n":
+      field = np.squeeze(NHconc1[jt1, :, :])
+      field0 = np.squeeze(NHconc[jt1, :, :])
+      field1 = np.squeeze(NHfield[jt1, :, :])
+    elif hemisphere == "s":
+      field = np.squeeze(SHconc1[jt1, :, :])
+      field0 = np.squeeze(SHconc[jt1, :, :])
+      field1 = np.squeeze(SHfield[jt1, :, :])
+    # Draw coastlines, country boundaries, fill continents, meridians & parallels
+    map.drawcoastlines(linewidth = 0.15)
+    map.fillcontinents(color = 'silver', lake_color = 'white')
+    map.drawmeridians(np.arange(0, 360, 60), linewidth=0.9, latmax=80, color='silver')
+    map.drawparallels(np.arange(60, 90, 10), linewidth=0.9, labels=[True,True,True,True], color='silver',fontsize=1)
+    if hemisphere == "s":
+      map.drawparallels(np.arange(-90, -55, 10), linewidth=0.9, labels=[True,True,True,True], color='silver',fontsize=1) 
+    map.drawlsmask(ocean_color='white')
+    meridians = np.arange(0, 360, 60)
+    circle = map.drawmapboundary(linewidth=1, color='black')
+    circle.set_clip_on(False)
+    # Create a contourf object called "cs"
+    norm = colors.DivergingNorm(vmin=lb, vcenter=0, vmax=ub)
+    cs = map.contourf(x, y, field1, clevs, cmap = cmap, vmin=lb, vmax=ub, norm = norm, latlon = False, extend = extmethod)
+    cs1 = map.contour(x, y, field, levels=[0.15], colors='green', linewidths=0.8)
+    cs2 = map.contour(x, y, field0, levels=[0.15], colors='m', linewidths=0.8)
+    cs.cmap.set_under(col_under)
+    cs.cmap.set_over(col_over)
+    axes.set_title(name[num],fontname='Arial', fontsize=7.5,fontweight='bold', loc='center',y=1.0, pad=3)
+
+  cax = fig.add_axes([0.93, 0.25, 0.03, 0.49])
+  cbar = fig.colorbar(cs, cax=cax,ticks=[-0.4,-0.2,0,0.2,0.4])
+  cbar.ax.yaxis.set_ticks_position('both')
+  cbar.ax.tick_params(direction='in',length=2)
+  cbar.set_label('Ice concentration difference (vs. NSIDC-0051)' ,fontname = 'Arial', fontsize = 8 , fontweight = 'bold')
+  for l in cbar.ax.get_yticklabels():
+    l.set_fontproperties('Arial') 
+    l.set_fontsize(8) 
+    l.set_fontweight('bold')
+ 
+  # Save figure 
+  filename    = 'FigureA' + str(jt + 1).zfill(1) 
+  imageformat = "png"  
+  dpi         = 500     
+  plt.savefig(filename + "." + imageformat, bbox_inches = "tight", dpi = dpi)
+  print('Figure ' + filename + "." + imageformat + " printed")
+  plt.close("fig")
 
 
