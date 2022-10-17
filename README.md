@@ -36,4 +36,4 @@ Launch Python 3.8.3 in the terminal, and then run the python scripts.
 
 References
 
-Lin X., Massonnet F., Fichefet T., and Vancoppenolle M.: SITool (v1.0) - a new evaluation tool for large-scale sea ice simulations: application to CMIP6 OMIP, Geosci. Model Dev., 14, 1–24, https://doi.org/10.5194/gmd-14-1-2021, 2021.
+Lin, X., Massonnet, F., Fichefet, T., and Vancoppenolle, M.: SITool (v1.0) – a new evaluation tool for large-scale sea ice simulations: application to CMIP6 OMIP, Geosci. Model Dev., 14, 6331–6354, https://doi.org/10.5194/gmd-14-6331-2021, 2021. 
