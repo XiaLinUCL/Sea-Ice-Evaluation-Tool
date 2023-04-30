@@ -20,7 +20,7 @@
 # PART 1) The ice extent calculation function  |   
 # ---------------------------------------------
 def compute_extent(concentration, cellarea, threshold = 0.15, mask = 1):
-  '''Input: - sea ice concentration (%)
+  '''Input: - sea ice concentration 
             - cellarea: array of grid cell areas (square meters)
             - Threshold over which to consider cell as ice covered
             - mask (1 on ocean, 0 on continent)
