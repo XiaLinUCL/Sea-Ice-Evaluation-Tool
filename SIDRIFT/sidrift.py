@@ -82,7 +82,7 @@ def compute_rotate(glamt,gphit,u,v,glamv,gphiv,hems):
 # --------------------------------------------------
 # PART 2) The interpolation and correction function |
 # --------------------------------------------------
-def compute_interp_correct(lon, lat, u, v, hems):
+def compute_interp_correct(lon, lat, ux, vy, hems):
   ''' Input: -latitude, longitude of the original grid
              -ice vectors on the original grid
       Output: Interpolated and corrected ice vectors 
