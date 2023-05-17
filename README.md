@@ -1,6 +1,6 @@
 1 Information and contact
 
-The Sea Ice Evaluation Tool version 1.0 (SITool v1.0) is a performance metrics and diagnostics tool developed to evaluate the model skills in simulating the sea ice concentration, extent, edge location, thickness, snow depth, and ice drift in the Arctic and Antarctic. This tool contains scripts to process model outputs from CMIP6 OMIP and two sets of observational references for six sea ice variables. This user guide aims at providing technical information for using this tool. More details on this study are provided in the paper submitted to Geoscientific Model Development (Lin et al. 2021). In case any questions arise, please do not hesitate to contact Xia Lin (xia.lin@uclouvain.be).
+The Sea Ice Evaluation Tool version 1.0 (SITool v1.0) is a performance metrics and diagnostics tool developed to evaluate the model skills in simulating the sea ice concentration, extent, edge location, thickness, snow depth, and ice drift in the Arctic and Antarctic. This tool contains scripts to process model outputs from CMIP6 OMIP and two sets of observational references for six sea ice variables. This user guide aims at providing technical information for using this tool. More details on this study are provided in the paper submitted to Geoscientific Model Development (Lin et al. 2021). In case any questions arise, please do not hesitate to contact Xia Lin (xia.lin@uclouvain.be or xia.lin104@gmail.com).
 
 2 Technical requirements
 
