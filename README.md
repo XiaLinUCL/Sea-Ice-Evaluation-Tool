@@ -4,7 +4,7 @@ The Sea Ice Evaluation Tool version 1.0 (SITool v1.0) is a performance metrics a
 
 2 Technical requirements
 
-The SITool v1.0 is based on Python 3.8.3. You have to install needed python packages before the calculation and plot, such as install Dataset from netCDF4 to read the NetCDF files, install pyresample to do the interpolation and install Basemap from mpl_toolkits.basemap to plot nice maps. 
+The SITool v1.0 is based on Python 3.8.3. You have to install needed python packages before the calculation and plot, such as install Dataset from netCDF4 to read the NetCDF files, install pyresample to do the interpolation and install Basemap from mpl_toolkits.basemap to plot nice maps.The package versions can be found in the environment file.
 
 3 Getting the SITool and preparing the data
 
