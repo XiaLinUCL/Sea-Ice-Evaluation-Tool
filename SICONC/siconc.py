@@ -130,7 +130,7 @@ def compute_siconc_metrics(concentration, concentration1, cellarea):
   ndpm=[31,28,31,30,31,30,31,31,30,31,30,31];
   error_mean=np.sum(error_mean_monthly*ndpm)/np.sum(ndpm)
   print(error_mean)
-  #=======================================================================
+  #================================================================================================================
   print('                ')
   print('ANOMALY VARIANCE')
   print('================')
@@ -159,7 +159,7 @@ def compute_siconc_metrics(concentration, concentration1, cellarea):
   #Compute global error on std
   error_std=np.nansum(error_std_conc*cellarea*mask_std_conc)/np.nansum(cellarea*mask_std_conc)
   print(error_std)
-  #========================================================================
+  #=========================================================================================================
   print('     ')
   print('TREND')
   print('=====')
