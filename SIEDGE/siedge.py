@@ -39,9 +39,9 @@ def compute_siedge_metrics(concentration, concentration1, cellarea):
 
   return IIEE, AEE, ME, error_mean
 
-# ------------------------------
-# PART 2) The heatmap function  |
-# ------------------------------
+# -----------------------------
+# PART 2) The heatmap function |
+# -----------------------------
 def heatmap(data, row_labels, col_labels, ax=None,
             cbar_kw={}, cbarlabel="", **kwargs):
   ''' Input: -data: A 2D numpy array of shape (N, M).
