@@ -13,9 +13,9 @@
 # 7) A script calls the functions 3) and 4) to plot the snow depth metrics（Fig. 7b）
 # 8) A script plots the February (Arctic) and September (Antarctic) mean snow depth differences (Figs. A7-A8);
 
-# ------------------------------------
-# PART 1) The interpolation function  |
-# ------------------------------------
+# -----------------------------------
+# PART 1) The interpolation function |
+# -----------------------------------
 def compute_interp(lat,lon,field):
   ''' Input: -latitude, longitude of the original grid
              -ice variable on the original grid
