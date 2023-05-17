@@ -93,9 +93,9 @@ def compute_interp(lat,lon,field):
 
     return NHconcentration, SHconcentration
 
-# --------------------------------------------
+# -------------------------------------------
 # PART 2) The ice thickness errors function  |   
-# --------------------------------------------
+# -------------------------------------------
 def compute_sithick_metrics(thickness0, thickness1):
   ''' Input: - sea ice thickness (m) in the Arctic or Antarctic from two datasets
       Output: Errors between two ice thickness datasets of mean cycle in the Arctic or Antarctic
